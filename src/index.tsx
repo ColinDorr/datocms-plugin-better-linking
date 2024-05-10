@@ -5,12 +5,14 @@ import {
   Field, 
   IntentCtx, 
   FieldIntentCtx,
+  RenderFieldExtensionCtx,
   RenderManualFieldExtensionConfigScreenCtx
  } from 'datocms-plugin-sdk';
 import 'datocms-react-ui/styles.css';
 import ConfigScreen from './entrypoints/ConfigScreen';
 import { render } from './utils/render';
-import LinkitConfigScreen from "./components/LinkitConfigScreen";
+import LinkitConfigScreen from "./configuration/LinkitConfigScreen";
+import LinkitEditor from "./components/LinkitEditor";
 
 connect({
   renderConfigScreen(ctx) {
@@ -34,6 +36,8 @@ connect({
       };
     }
   },
+
+  // Render Configuration screens
   renderManualFieldExtensionConfigScreen(
     fieldExtensionId: string,
     ctx: RenderManualFieldExtensionConfigScreenCtx,
@@ -46,5 +50,13 @@ connect({
         <LinkitConfigScreen ctx={ctx} />
       </React.StrictMode>,
     );
+  },
+
+
+  renderFieldExtension(fieldExtensionId: string, ctx: RenderFieldExtensionCtx) {
+    switch (fieldExtensionId) {
+      case 'linkit':
+        return render(<LinkitEditor ctx={ctx} />);
+    }
   },
 });
