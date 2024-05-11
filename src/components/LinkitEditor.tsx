@@ -10,6 +10,8 @@ import {
     TextField
 } from 'datocms-react-ui';
 
+import styles from './styles.module.css';
+
 type PropTypes = {
   ctx: RenderFieldExtensionCtx;
 };
@@ -17,13 +19,12 @@ type PropTypes = {
 export default function LinkitEditor({ ctx }: PropTypes) {
   return (
     <Canvas ctx={ctx}>
-        <Form onSubmit={() => console.log('onSubmit')}>
-            <FieldGroup>
+        <Form className={ styles.linkit } onSubmit={() => console.log('onSubmit')}>
+            <FieldGroup className={ styles.linkit__column }>
                 <SelectField
                     name="type"
                     id="type"
                     label="Type"
-                    hint="Select your prefferd link type"
                     value={{ label: 'Record', value: 'record' }}
                     selectInputProps={{
                     options: [
@@ -39,7 +40,6 @@ export default function LinkitEditor({ ctx }: PropTypes) {
                     name="styling"
                     id="styling"
                     label="Styling"
-                    hint="Select your prefferd styling"
                     value={{ label: 'Default', value: 'default' }}
                     selectInputProps={{
                     options: [
@@ -53,32 +53,29 @@ export default function LinkitEditor({ ctx }: PropTypes) {
                     onChange={(newValue) => console.log(newValue)}
                 />
             </FieldGroup>
-            <FieldGroup>
+            <FieldGroup className={ styles.linkit__column }>
                 <TextField
                     name="link"
                     id="link"
                     label="Link"
                     value="https://wwww.nu.nl"
-                    hint="Your link"
                     textInputProps={{ monospaced: true }}
                     onChange={(newValue) => console.log(newValue)}
                 />
                 <TextField
                     name="custom_text"
                     id="custom_text"
-                    label="Custom text"
+                    label="Custom text (Optional)"
                     value=""
-                    hint="Overwrite link text (optional)"
                     textInputProps={{ monospaced: true }}
                     onChange={(newValue) => console.log(newValue)}
                 />
             </FieldGroup>
-            <FieldGroup>
+            <FieldGroup className={ styles.linkit__column_top }>
                 <SwitchField
                     name="open_in_new_window"
                     id="open_in_new_window"
                     label="Open in new window"
-                    hint="Choose if link needs to open in an new window"
                     value={true}
                     onChange={(newValue) => console.log(newValue)}
                 />

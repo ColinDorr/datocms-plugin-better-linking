@@ -19,6 +19,8 @@
      ----------------------------------------------------------------------------------
 - [] Allow user to select link type, add custom text/ or title/link as default, target toggle, styling dropdown
 - [] Save data as usabel data object { url, text, target, date-style }
+- [] allow removing of field
+- [] Allow drag and drop
 
 ### Rendering
 - [] Render Field as stand alone field

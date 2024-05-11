@@ -56,6 +56,7 @@ connect({
   renderFieldExtension(fieldExtensionId: string, ctx: RenderFieldExtensionCtx) {
     switch (fieldExtensionId) {
       case 'linkit':
+        console.log(ctx)
         return render(<LinkitEditor ctx={ctx} />);
     }
   },
