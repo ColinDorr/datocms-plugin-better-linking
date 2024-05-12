@@ -29,15 +29,19 @@ connect({
       },
     ];
   },
+
+  // Add field editor "Linkit" to link field appearences
   overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
-    if (field.attributes.field_type === 'link') {
+    if (
+      field.attributes.field_type === "link"
+    ) {
       return {
-        addons: [{ id: 'linkit' }],
+        editor: { id: 'linkit' },
       };
     }
   },
 
-  // Render Configuration screens
+  // Render field configuration screens 
   renderManualFieldExtensionConfigScreen(
     fieldExtensionId: string,
     ctx: RenderManualFieldExtensionConfigScreenCtx,
@@ -52,7 +56,7 @@ connect({
     );
   },
 
-
+  // Render Field in records 
   renderFieldExtension(fieldExtensionId: string, ctx: RenderFieldExtensionCtx) {
     switch (fieldExtensionId) {
       case 'linkit':

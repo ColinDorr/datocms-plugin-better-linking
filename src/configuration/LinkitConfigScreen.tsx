@@ -1,6 +1,7 @@
-import { Field, RenderManualFieldExtensionConfigScreenCtx } from 'datocms-plugin-sdk';
-import { Canvas, Form, SwitchField } from 'datocms-react-ui';
-import { CSSProperties, useCallback, useState } from 'react';
+import { Field, RenderManualFieldExtensionConfigScreenCtx } from "datocms-plugin-sdk";
+import { Canvas, Form, SwitchField } from "datocms-react-ui";
+import { CSSProperties, useCallback, useState } from "react";
+import Log from "./../utils/develop";
 
 type PropTypes = {
   ctx: RenderManualFieldExtensionConfigScreenCtx;
@@ -9,8 +10,8 @@ type PropTypes = {
 const parameters = [
     { label: "Allow Records", value: true, key: "allow_record" },
     { label: "Allow URL", value: true, key: "allow_url" },
-    { label: "Allow Telephone", value: true, key: "allow_tel" },
-    { label: "Allow Mail", value: true, key: "allow_mail" },
+    { label: "Allow Telephone numbers", value: true, key: "allow_tel" },
+    { label: "Allow Emailadresses", value: true, key: "allow_email" },
     { label: "Allow Target control", value: true, key: "allow_new_target" },
 ];
 
@@ -29,7 +30,7 @@ export default function LinkitConfigScreen({ ctx }: PropTypes) {
                     onChange={(newValue) => {
                         const updatedParameters = { ...ctxParameters, [param.key]: newValue };
                         ctx.updatePluginParameters(updatedParameters);
-                        console.log(updatedParameters)
+                        Log(updatedParameters)
                     }}
                 />
             ))}
