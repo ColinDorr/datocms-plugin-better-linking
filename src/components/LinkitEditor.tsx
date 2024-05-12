@@ -19,11 +19,24 @@ type PropTypes = {
 
 export default function LinkitEditor({ ctx }: PropTypes) {
     const ctxParameters = ctx.plugin.attributes.parameters as any;
-    const allowNewTarget = ctxParameters?.allow_new_target || false;
+    const allowNewTarget = ctxParameters?.contentSettings?.allow_new_target || false;
 
-    if(!allowNewTarget){
-        const updatedParameters = { ...ctxParameters, "open_in_new_window": false };
+    const updateContentSettings = ( valueObject: object ) => {
+        const updatedParameters = {
+            ...ctxParameters,
+            contentSettings: {
+                ...ctxParameters.contentSettings,
+                ...valueObject
+            }
+        };
         ctx.updatePluginParameters(updatedParameters);
+        Log(updatedParameters)
+    }
+
+    // Set target, when allow_target is false
+    if(!allowNewTarget){
+        const open_in_new_window_value = { ...ctxParameters?.contentSettings?.open_in_new_window || false };
+        updateContentSettings({"open_in_new_window": open_in_new_window_value});
     }
 
     // Set typeOptions array
@@ -54,57 +67,52 @@ export default function LinkitEditor({ ctx }: PropTypes) {
                         name="type"
                         id="type"
                         label="Type"
-                        value={ ctxParameters.type || typeOptions[0] }
+                        value={ ctxParameters?.contentSettings?.type || typeOptions[0] }
                         selectInputProps={{
                             options: typeOptions,
                         }}
                         onChange={(newValue) => {
-                            const updatedParameters = { ...ctxParameters, "type": newValue,  "link": null };
-                            ctx.updatePluginParameters(updatedParameters);
-                            Log(updatedParameters)
+                            updateContentSettings({ 
+                                "type": newValue, 
+                                "link": null 
+                            })
                         }}
                     />
                     <SelectField
                         name="styling"
                         id="styling"
                         label="Styling"
-                        value={ ctxParameters.styling || stylingOptions[0] }
+                        value={ ctxParameters?.contentSettings?.styling || stylingOptions[0] }
                         selectInputProps={{
                         options: stylingOptions,
                         }}
                         onChange={(newValue) => {
-                            const updatedParameters = { ...ctxParameters, "styling": newValue };
-                            ctx.updatePluginParameters(updatedParameters);
-                            Log(updatedParameters)
+                            updateContentSettings({"styling": newValue})
                         }}
                     />
                 </FieldGroup>
                 <FieldGroup className={ styles.linkit__column }>
-                    {["url", "tel", "email"].includes(ctxParameters?.type?.value || typeOptions[0].value) && (
+                    {["url", "tel", "email"].includes(ctxParameters?.contentSettings?.type?.value || typeOptions[0].value) && (
                         <TextField
                             name="link"
                             id="link"
-                            label={ctxParameters?.type?.label || typeOptions[0].label}
-                            value={ctxParameters.link || ""}
+                            label={ctxParameters?.contentSettings?.type?.label || typeOptions[0].label}
+                            value={ctxParameters?.contentSettings?.link || ""}
                             textInputProps={{ monospaced: true }}
                             onChange={(newValue) => {
-                                const updatedParameters = { ...ctxParameters, "link": newValue };
-                                ctx.updatePluginParameters(updatedParameters);
-                                Log(updatedParameters);
+                                updateContentSettings({"link": newValue})
                             }}
                         />
                     )}
-                    {["record"].includes(ctxParameters?.type?.value || typeOptions[0].value) && (
+                    {["record"].includes(ctxParameters?.contentSettings?.type?.value || typeOptions[0].value) && (
                         <TextField
                             name="link"
                             id="link"
-                            label={ctxParameters?.type?.label || typeOptions[0].label}
-                            value={ctxParameters.link || ""}
+                            label={ctxParameters?.contentSettings?.type?.label || typeOptions[0].label}
+                            value={ctxParameters?.contentSettings?.link || ""}
                             textInputProps={{ monospaced: true }}
                             onChange={(newValue) => {
-                                const updatedParameters = { ...ctxParameters, "link": newValue };
-                                ctx.updatePluginParameters(updatedParameters);
-                                Log(updatedParameters);
+                                updateContentSettings({"link": newValue})
                             }}
                         />
                     )}
@@ -112,12 +120,10 @@ export default function LinkitEditor({ ctx }: PropTypes) {
                         name="custom_text"
                         id="custom_text"
                         label="Custom text (Optional)"
-                        value={ ctxParameters.custom_text || null }
+                        value={ ctxParameters?.contentSettings?.custom_text || null }
                         textInputProps={{ monospaced: true }}
                         onChange={(newValue) => {
-                            const updatedParameters = { ...ctxParameters, "custom_text": newValue };
-                            ctx.updatePluginParameters(updatedParameters);
-                            Log(updatedParameters)
+                            updateContentSettings({"custom_text": newValue})
                         }}
                     />
                 </FieldGroup>
@@ -127,11 +133,9 @@ export default function LinkitEditor({ ctx }: PropTypes) {
                             name="open_in_new_window"
                             id="open_in_new_window"
                             label="Open in new window"
-                            value={ctxParameters.open_in_new_window || false}
+                            value={ctxParameters?.contentSettings?.open_in_new_window || false}
                             onChange={(newValue) => {
-                                const updatedParameters = { ...ctxParameters, "open_in_new_window": newValue };
-                                ctx.updatePluginParameters(updatedParameters);
-                                Log(updatedParameters);
+                                updateContentSettings({"open_in_new_window": newValue})
                             }}
                         />
                     ) : null}

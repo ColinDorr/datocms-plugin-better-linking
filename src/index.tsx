@@ -9,14 +9,16 @@ import {
   RenderManualFieldExtensionConfigScreenCtx
  } from 'datocms-plugin-sdk';
 import 'datocms-react-ui/styles.css';
-import ConfigScreen from './entrypoints/ConfigScreen';
 import { render } from './utils/render';
-import LinkitConfigScreen from "./configuration/LinkitConfigScreen";
+
+import PluginConfigScreen from './entrypoints/PluginConfigScreen';
+import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
+
 import LinkitEditor from "./components/LinkitEditor";
 
 connect({
   renderConfigScreen(ctx) {
-    return render(<ConfigScreen ctx={ctx} />);
+    return render(<PluginConfigScreen ctx={ctx} />);
   },
   manualFieldExtensions(ctx: IntentCtx) {
     return [
@@ -51,7 +53,7 @@ connect({
 
     root.render(
       <React.StrictMode>
-        <LinkitConfigScreen ctx={ctx} />
+        <FieldConfigScreen ctx={ctx} />
       </React.StrictMode>,
     );
   },
