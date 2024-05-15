@@ -1,13 +1,10 @@
-import { RenderManualFieldExtensionConfigScreenCtx,RenderConfigScreenCtx} from "datocms-plugin-sdk";
-import { Canvas, Section, ContextInspector } from "datocms-react-ui";
 import { useState } from "react";
-
-// import type { RenderConfigScreenCtx } from 'datocms-plugin-sdk';
-// import { Canvas, ContextInspector } from 'datocms-react-ui';
-// import s from './styles.module.css';
+import { Canvas, Section } from "datocms-react-ui";
+import { RenderConfigScreenCtx } from "datocms-plugin-sdk";
 
 import LinkSettings from './../components/controlls/linkSetting';
 import StylingSettings from './../components/controlls/stylingSettings';
+import styles from "./styles/styles.PluginConfigScreen.module.css";
 
 type Props = {
     ctx: RenderConfigScreenCtx;

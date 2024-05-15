@@ -17,13 +17,14 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
     const ctxParameters = ctx.plugin.attributes.parameters as any;
 
     const getDefaultValue = (key: string, fallback: string | boolean) => {
-        if(ctxParameters?.[configType]?.[key] !== null){
+        if(ctxParameters?.[configType]?.[key] !== undefined){
             return ctxParameters?.[configType]?.[key]
-        } else if (ctxParameters?.["plugin_settings"]?.[key] !== null ){
-            return ctxParameters?.["plugin_settings"]?.[key]
-        } return {
-            fallback
-        }
+          } else if (ctxParameters?.["field_settings"]?.[key] !== undefined) {
+            return ctxParameters["field_settings"][key];
+          } else if (ctxParameters?.["plugin_settings"]?.[key] !== undefined) {
+              return ctxParameters["plugin_settings"][key];
+          }
+          return fallback;
     }
     
     const parameters: ConfigSetting[] = [

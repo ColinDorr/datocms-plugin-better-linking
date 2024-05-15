@@ -13,8 +13,7 @@ import { render } from './utils/render';
 
 import PluginConfigScreen from './entrypoints/PluginConfigScreen';
 import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
-
-import LinkitEditor from "./components/LinkitEditor";
+import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
 
 connect({
   renderConfigScreen(ctx) {
@@ -63,7 +62,7 @@ connect({
     switch (fieldExtensionId) {
       case 'linkit':
         console.log(ctx)
-        return render(<LinkitEditor ctx={ctx} />);
+        return render(<ContentConfigScreen ctx={ctx} />);
     }
   },
 });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RenderFieldExtensionCtx } from "datocms-plugin-sdk";
 import { Canvas, Form, FieldGroup, SelectField, SwitchField, TextField } from "datocms-react-ui";
 import Log from "./../utils/develop";
-import styles from "./styles.module.css";
+import styles from "./styles/styles.ContentConfigScreen.module.css";
 
 type PropTypes = {
   ctx: RenderFieldExtensionCtx;
@@ -18,7 +18,7 @@ type ContentSettings = {
     open_in_new_window: boolean
  };
 
-export default function LinkitEditor({ ctx }: PropTypes) {
+export default function ContentConigScreen({ ctx }: PropTypes) {
     // Retrieve parameters from context
     const ctxParameters = ctx.plugin.attributes.parameters as any;
     const configType = "content_settings";
