@@ -28,7 +28,7 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
                     configType="field_settings" 
                 />
             </Section>
-            <Section
+            {/* <Section
                 title="Styling settings"
                 collapsible={{ 
                     isOpen: stylingSettingIsOpen, 
@@ -39,7 +39,7 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
                     ctx={ctx} 
                     configType="field_settings"
                 />
-            </Section>
+            </Section> */}
         </Canvas>
     );
 }

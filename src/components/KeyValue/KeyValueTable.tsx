@@ -8,8 +8,8 @@ const KeyValueTable = (
   { ctx, configType }: any,
 ) => {
   const ctxParameters = ctx.plugin.attributes.parameters as any;
-  const stylingTypes = ctxParameters?.field_settings?.stylingValues 
-  || ctxParameters?.plugin_settings?.stylingValues 
+  const stylingTypes = ctxParameters?.field_settings?.stylingOptions 
+  || ctxParameters?.plugin_settings?.stylingOptions 
   || [];
 
   const [keyValueList, setKeyValueList] = useState<{ key: string; value: string; }[]>(stylingTypes);
@@ -20,7 +20,7 @@ const KeyValueTable = (
       ...ctxParameters,
       [configType]: {
         ...(ctxParameters?.[configType] || {}),
-        stylingValues: value || []
+        stylingOptions: value || []
       }
     };
     ctx.updatePluginParameters(updatedParameters);

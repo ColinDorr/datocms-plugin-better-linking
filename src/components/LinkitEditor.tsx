@@ -21,7 +21,6 @@ type ContentSettings = {
 export default function LinkitEditor({ ctx }: PropTypes) {
     // Retrieve parameters from context
     const ctxParameters = ctx.plugin.attributes.parameters as any;
-    console.log(ctxParameters)
 
     // Function to get default value based on priority
     const getDefaultValue = (key: string, fallback: any) => {
