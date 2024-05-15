@@ -5,7 +5,7 @@ import Log from "./../utils/develop";
 import styles from "./styles/styles.ContentConfigScreen.module.css";
 
 type PropTypes = {
-  ctx: RenderFieldExtensionCtx;
+  ctx: any;
 };
 
 type LinkType = { label: string, value: string };
@@ -21,7 +21,23 @@ type ContentSettings = {
 export default function ContentConigScreen({ ctx }: PropTypes) {
     // Retrieve parameters from context
     const ctxParameters = ctx.plugin.attributes.parameters as any;
+    const ctxLinkSettings = {
+        locale: ctx?.locale,
+        itemTypes: ctx?.field?.attributes?.validators?.item_item_type?.item_types,
+        localized: ctx?.field?.attributes?.validators?.localized || ctx?.locale,
+    }
     const configType = "content_settings";
+
+
+    // TODO
+    // Use the ctxLinkSettings to query all selected records in cms in a model view
+    console.log({
+        ctxParameters,
+        ctxLinkSettings
+    })
+
+    // TODO
+    // Save the values and allow graphql access
 
     // Function to get default value based on priority
     const getDefaultValue = (key: string, fallback: any) => {
