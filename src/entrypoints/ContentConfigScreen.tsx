@@ -23,18 +23,41 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const ctxParameters = ctx.plugin.attributes.parameters as any;
     const ctxLinkSettings = {
         locale: ctx?.locale,
-        itemTypes: ctx?.field?.attributes?.validators?.item_item_type?.item_types,
+        itemTypes: ctx?.field?.attributes?.validators?.item_item_type?.item_types || [],
         localized: ctx?.field?.attributes?.validators?.localized || ctx?.locale,
     }
+    const itemTypes = ctx.itemTypes;
     const configType = "content_settings";
     
-
-    // TODO
+        // TODO
     // Use the ctxLinkSettings to query all selected records in cms in a model view
     console.log({
         ctxParameters,
-        ctxLinkSettings
+        ctxLinkSettings,
+        itemTypes
     })
+
+    const allowedItemTypes = () => {
+        const itemTypesList = ctxLinkSettings?.itemTypes?.length > 0  
+            ? ctxLinkSettings.itemTypes.map((id: string) => {
+                return {
+                    label: itemTypes[id].attributes.name, 
+                    api_key: itemTypes[id].attributes.api_key, 
+                    value: id}
+            }).sort((a:any, b:any) => {
+                if (a.label < b.label) return -1;
+                if (a.label > b.label) return 1;
+                return 0;
+              })
+            : [];
+
+        return [
+            { label: "--select--", api_key: null, value: null },
+            ...itemTypesList
+        ]  as {label: string, api_key: any, value: any }[]
+    }
+
+
 
     // TODO
     // Save the values and allow graphql access
@@ -84,8 +107,16 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
             }
         };
         ctx.updatePluginParameters(updatedParameters);
-        // ctx.setParameters({ color: '#ff0000' });
         Log({updatedParameters})
+    }
+
+    
+    const getRecordOfType = async (item: any) => {
+        let record = null;
+        if(item.value !== null ) {
+            record = await ctx.selectItem(item.value, { multiple: false });
+        }
+        console.log({record})
     }
 
     return (
@@ -148,25 +179,37 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                 }}
                             />
                         ) : contentSettings.linkType && ["record"].includes(contentSettings?.linkType?.value) ? (
-                            <Button
-                                buttonType="primary"
-                                leftIcon={
-                                    <>
-                                        <span className="sr-only">Record </span>
-                                    </>
-                                }
-                                onClick={async () => {
-                                    const itemTypeId = ["CeXLAMZWQuCUuWSF9aiLdw","Q5GjmOX5SqmK9uj0TBr3kg"];
-
-                                    const selectedItem = await ctx.selectItem("CeXLAMZWQuCUuWSF9aiLdw", { multiple: false });
-                                
-                                    if (selectedItem) {
-                                        console.log('Selected Item:', selectedItem);
-                                    } else {
-                                        console.log('No item selected');
-                                    }
+                            <SelectField
+                                name="styling"
+                                id="styling"
+                                label="Record"
+                                value={ allowedItemTypes()[0] }
+                                selectInputProps={{
+                                    options: allowedItemTypes(),
+                                }}
+                                onChange={(newValue) => {
+                                    getRecordOfType(newValue)
                                 }}
                             />
+                            // <Button
+                            //     buttonType="primary"
+                            //     leftIcon={
+                            //         <>
+                            //             <span className="sr-only">Record </span>
+                            //         </>
+                            //     }
+                            //     onClick={async () => {
+                            //         const itemTypeId = ["CeXLAMZWQuCUuWSF9aiLdw","Q5GjmOX5SqmK9uj0TBr3kg"];
+
+                            //         const selectedItem = await ctx.selectItem("CeXLAMZWQuCUuWSF9aiLdw", { multiple: false });
+                                
+                            //         if (selectedItem) {
+                            //             console.log('Selected Item:', selectedItem);
+                            //         } else {
+                            //             console.log('No item selected');
+                            //         }
+                            //     }}
+                            // />
                             // <TextField
                             //     name="link"
                             //     id="link"

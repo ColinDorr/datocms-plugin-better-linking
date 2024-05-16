@@ -34,7 +34,8 @@ connect({
   // Add field editor "Linkit" to link field appearences
   overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
     if (
-      field.attributes.field_type === "link"
+      field.attributes.field_type === "link" 
+      && field.attributes.appearance?.field_extension === "linkit"
     ) {
       return {
         editor: { id: 'linkit' },

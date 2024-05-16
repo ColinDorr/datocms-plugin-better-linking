@@ -7,9 +7,10 @@
 ## TODO
 
 ### Configuration
-- [] Add Linkit as entries link type
-- [] Add controls to choose access to records, urls, tel, mail, target
-- [] Add custom styling table controls (label, value, default)
+- [X] Add Linkit as entries link type
+- [X] Add controls to choose access to records, asset, urls, tel, mail, target
+- [X] Add custom styling table controls (label, value, default)
+- [] Make field setting, field specific, based on field ID. To prevent fields all using the same styling
 
 ### Input
 - [] Render field layout 
