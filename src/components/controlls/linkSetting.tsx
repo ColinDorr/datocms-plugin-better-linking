@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, FieldGroup, Button, SwitchField } from "datocms-react-ui";
+import React, { useState, } from 'react';
+import { Form, FieldGroup, Button, SwitchField} from "datocms-react-ui";
 import Log from "./../../utils/develop";
 
 type PropTypes = {
@@ -29,6 +29,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
     
     const parameters: ConfigSetting[] = [
         { id: "allow_record",       label: "Allow Records",                 value: getDefaultValue("allow_record", true)        },
+        { id: "allow_assets",       label: "Allow Assets",                  value: getDefaultValue("allow_assets", true)        },
         { id: "allow_url",          label: "Allow URL",                     value: getDefaultValue("allow_url", true)           },
         { id: "allow_tel",          label: "Allow Telephone numbers",       value: getDefaultValue("allow_tel", true)           },
         { id: "allow_email",        label: "Allow Email addresses",         value: getDefaultValue("allow_email", true)         },
@@ -38,6 +39,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
     const linkValues: any = {
         allow_record: { label: "Record", value: "record" },
+        allow_assets: { label: "Asset", value: "asset" },
         allow_url: { label: "URL", value: "url" },
         allow_tel: { label: "Telephone number", value: "tel" },
         allow_email: { label: "Email address", value: "email" }
@@ -45,7 +47,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
     const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(parameters);
 
-    const updateCtx = () => {
+    const updateCtx = async () => {
         // Generate list with setting booleans
         const updatedConfigSettings = configSettings.reduce((
             acc: { [label: string]: boolean }, 
@@ -76,6 +78,8 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
         }
 
         ctx.updatePluginParameters(newCtxParameters);
+        // const message = prompt("Link settings updated", "Link settings updated");
+        // await ctx.notice(message);
         Log({ newCtxParameters });
     };
 

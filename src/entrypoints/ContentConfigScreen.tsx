@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RenderFieldExtensionCtx } from "datocms-plugin-sdk";
-import { Canvas, Form, FieldGroup, SelectField, SwitchField, TextField } from "datocms-react-ui";
+import { Canvas, Form, FieldGroup, SelectField, SwitchField, TextField, Button } from "datocms-react-ui";
 import Log from "./../utils/develop";
 import styles from "./styles/styles.ContentConfigScreen.module.css";
 
@@ -27,7 +27,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         localized: ctx?.field?.attributes?.validators?.localized || ctx?.locale,
     }
     const configType = "content_settings";
-
+    
 
     // TODO
     // Use the ctxLinkSettings to query all selected records in cms in a model view
@@ -75,6 +75,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
             ...contentSettings,
             ...valueObject
         })
+
+        console.log({contentSettings})
         const updatedParameters = {
             ...ctxParameters,
             contentSettings: {
@@ -82,6 +84,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
             }
         };
         ctx.updatePluginParameters(updatedParameters);
+        // ctx.setParameters({ color: '#ff0000' });
         Log({updatedParameters})
     }
 
@@ -129,20 +132,52 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                     updateContentSettings({"link": newValue})
                                 }}
                             />
-                        ) : (
-                            contentSettings.linkType && ["record"].includes(contentSettings?.linkType?.value) ? (
-                                <TextField
-                                    name="link"
-                                    id="link"
-                                    label={contentSettings.linkType.label}
-                                    value={contentSettings.link}
-                                    textInputProps={{ monospaced: true }}
-                                    onChange={(newValue) => {
-                                        updateContentSettings({"link": newValue})
-                                    }}
-                                />
-                            ) : null
-                        )}
+                        ) : contentSettings.linkType && ["asset"].includes(contentSettings?.linkType?.value) ? (
+                            <Button
+                                buttonType="primary"
+                                leftIcon={
+                                    <>
+                                        <span className="sr-only">Asset </span>
+                                    </>
+                                }
+                                onClick={async () => {
+                                    const item = await ctx.selectUpload({ multiple: false });
+                                    console.log({
+                                        selectUpload: item
+                                    })
+                                }}
+                            />
+                        ) : contentSettings.linkType && ["record"].includes(contentSettings?.linkType?.value) ? (
+                            <Button
+                                buttonType="primary"
+                                leftIcon={
+                                    <>
+                                        <span className="sr-only">Record </span>
+                                    </>
+                                }
+                                onClick={async () => {
+                                    const itemTypeId = ["CeXLAMZWQuCUuWSF9aiLdw","Q5GjmOX5SqmK9uj0TBr3kg"];
+
+                                    const selectedItem = await ctx.selectItem("CeXLAMZWQuCUuWSF9aiLdw", { multiple: false });
+                                
+                                    if (selectedItem) {
+                                        console.log('Selected Item:', selectedItem);
+                                    } else {
+                                        console.log('No item selected');
+                                    }
+                                }}
+                            />
+                            // <TextField
+                            //     name="link"
+                            //     id="link"
+                            //     label={contentSettings.linkType.label}
+                            //     value={contentSettings.link}
+                            //     textInputProps={{ monospaced: true }}
+                            //     onChange={(newValue) => {
+                            //         updateContentSettings({"link": newValue})
+                            //     }}
+                            // />
+                        ) : null }
                         { allowCustomText && (
                             <TextField
                                 name="custom_text"
