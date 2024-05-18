@@ -1,6 +1,9 @@
 import React, { useState, } from 'react';
 import { Form, FieldGroup, Button, SwitchField} from "datocms-react-ui";
 import Log from "./../../utils/develop";
+import Helpers from "./../../utils/helpers";
+
+const { getCtxParams, getDefaultValue } = Helpers();
 
 type PropTypes = {
     ctx: any;
@@ -14,73 +17,47 @@ type ConfigSetting = {
 };
 
 const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
-    const ctxParameters = ctx.plugin.attributes.parameters as any;
+    const ctxParameters:any = getCtxParams(ctx,configType);
 
-    const getDefaultValue = (key: string, fallback: string | boolean) => {
-        if(ctxParameters?.[configType]?.[key] !== undefined){
-            return ctxParameters?.[configType]?.[key]
-          } else if (ctxParameters?.["field_settings"]?.[key] !== undefined) {
-            return ctxParameters["field_settings"][key];
-          } else if (ctxParameters?.["plugin_settings"]?.[key] !== undefined) {
-              return ctxParameters["plugin_settings"][key];
-          }
-          return fallback;
-    }
-    
-    const parameters: ConfigSetting[] = [
-        { id: "allow_record",       label: "Allow Records",                 value: getDefaultValue("allow_record", true)        },
-        { id: "allow_assets",       label: "Allow Assets",                  value: getDefaultValue("allow_assets", true)        },
-        { id: "allow_url",          label: "Allow URL",                     value: getDefaultValue("allow_url", true)           },
-        { id: "allow_tel",          label: "Allow Telephone numbers",       value: getDefaultValue("allow_tel", true)           },
-        { id: "allow_email",        label: "Allow Email addresses",         value: getDefaultValue("allow_email", true)         },
-        { id: "allow_custom_text",  label: "Allow Custom text",             value: getDefaultValue("allow_custom_text", true)   },
-        { id: "allow_new_target",   label: "Allow Target control",          value: getDefaultValue("allow_new_target", true)    },
+    const savedLinkFieldSettings: ConfigSetting[] = [
+        { id: "allow_record",       label: "Allow Records",                 value: getDefaultValue(ctxParameters,"allow_record", true)        },
+        { id: "allow_assets",       label: "Allow Assets",                  value: getDefaultValue(ctxParameters,"allow_assets", true)        },
+        { id: "allow_url",          label: "Allow URL",                     value: getDefaultValue(ctxParameters,"allow_url", true)           },
+        { id: "allow_tel",          label: "Allow Telephone numbers",       value: getDefaultValue(ctxParameters,"allow_tel", true)           },
+        { id: "allow_email",        label: "Allow Email addresses",         value: getDefaultValue(ctxParameters,"allow_email", true)         },
+        { id: "allow_custom_text",  label: "Allow Custom text",             value: getDefaultValue(ctxParameters,"allow_custom_text", true)   },
+        { id: "allow_new_target",   label: "Allow Target control",          value: getDefaultValue(ctxParameters,"allow_new_target", true)    },
     ];
-
-    const linkValues: any = {
-        allow_record: { label: "Record", value: "record" },
-        allow_assets: { label: "Asset", value: "asset" },
-        allow_url: { label: "URL", value: "url" },
-        allow_tel: { label: "Telephone number", value: "tel" },
-        allow_email: { label: "Email address", value: "email" }
+    const linkFieldValues: any = {
+        allow_record:   { label: "Record",              value: "record" },
+        allow_assets:   { label: "Asset",               value: "asset"  },
+        allow_url:      { label: "URL",                 value: "url"    },
+        allow_tel:      { label: "Telephone number",    value: "tel"    },
+        allow_email:    { label: "Email address",       value: "email"  }
     };
 
-    const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(parameters);
+    const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(savedLinkFieldSettings);
 
     const updateCtx = async () => {
-        // Generate list with setting booleans
-        const updatedConfigSettings = configSettings.reduce((
-            acc: { [label: string]: boolean }, 
-            obj: ConfigSetting
-        ) => {
-            acc[obj.id] = obj.value as boolean;
-            return acc;
-        }, {});
+        const settings: { [key: string]: any } = {};
+        const linkTypeOptions: string[] = [];
 
-        // Generate Array of linkTypeOptions (record, url, email, tel)
-        const linkTypeOptions: {label:string, value:string}[] = [];
-        Object.keys(updatedConfigSettings).forEach(id => {
-            if (linkValues[id]) {
-                linkTypeOptions.push({
-                    label: linkValues[id].label,
-                    value: linkValues[id].value
-                })
+        configSettings.forEach((item: ConfigSetting) => {
+            if (item.value === true) {  
+                linkTypeOptions.push(linkFieldValues[item.id]); 
             }
+            settings[item.id] = item.value;
         });
+ 
+        settings.linkTypeOptions = linkTypeOptions.filter(e => e !== undefined);
 
-        const newCtxParameters = {
-            ...ctxParameters,
-            [configType]: {
-                ...(ctxParameters?.[configType] || {}),
-                ...updatedConfigSettings,
-                linkTypeOptions: linkTypeOptions
-            }
+        if (configType === "plugin_settings") {
+            ctx.updatePluginParameters(settings);
+        } else if (configType === "field_settings") {
+            ctx.setParameters({ field_settings: settings });
         }
-
-        ctx.updatePluginParameters(newCtxParameters);
-        // const message = prompt("Link settings updated", "Link settings updated");
-        // await ctx.notice(message);
-        Log({ newCtxParameters });
+        
+        Log({[`New Settings: ${configType}`] : settings });
     };
 
     return (

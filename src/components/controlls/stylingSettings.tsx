@@ -2,27 +2,18 @@ import React, { useState, MouseEvent } from 'react';
 import { Form, Button, FieldGroup} from 'datocms-react-ui';
 import Log from "./../../utils/develop";
 import StylingItem from './partials/StylingItem';
+import Helpers from "./../../utils/helpers";
+
+const { getCtxParams, getDefaultValue } = Helpers();
 
 type PropTypes = { ctx: any; configType: string; };
 type KeyValuePairType = { id: number; label: string; value: string; };
 type StylingType = { label: string; value: string; };
 
 const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
-    const ctxParameters = ctx.plugin.attributes.parameters as any;
+    const ctxParameters: any = getCtxParams(ctx, configType);
 
-    // Function to get default value based on priority
-    const getDefaultValue = (key: string, fallback: any) => {
-      if(ctxParameters?.[configType]?.[key] !== undefined){
-        return ctxParameters?.[configType]?.[key]
-      } else if (ctxParameters?.["field_settings"]?.[key] !== undefined) {
-        return ctxParameters["field_settings"][key];
-      } else if (ctxParameters?.["plugin_settings"]?.[key] !== undefined) {
-          return ctxParameters["plugin_settings"][key];
-      }
-      return fallback;
-    };
-
-    const stylingOptions = getDefaultValue("stylingOptions", []) as StylingType[] ?? [];
+    const stylingOptions = getDefaultValue(ctxParameters, "stylingOptions", []) as StylingType[] ?? [];
     const [keyValueList, setKeyValueList] = useState<KeyValuePairType[]>(
         stylingOptions.map((i, index) => ({
             id: index,
@@ -30,7 +21,8 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
             value: i.value,
         }))
     );
-    const updateCtx = () => {
+
+    const updateCtx = async () => {
         const stylingOptions: { label: string, value: string }[] = [];
         keyValueList.forEach((item: KeyValuePairType) => {
             stylingOptions.push({
@@ -38,17 +30,17 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
                 value: item.value,
             });
         });
+        const settings = { ...ctxParameters, stylingOptions };
 
-        const updatedParameters = {
-            ...ctxParameters,
-            [configType]: {
-                ...(ctxParameters?.[configType] || {}),
-                stylingOptions: stylingOptions || []
-            }
-        };
-        ctx.updatePluginParameters(updatedParameters);
-        Log(updatedParameters);
-    }
+        if (configType === "plugin_settings") {
+            ctx.updatePluginParameters(settings);
+        } else if (configType === "field_settings") {
+            ctx.setParameters({ field_settings: settings });
+        }
+        
+        Log({[`New Styling: ${configType}`] : settings });
+    };
+
 
     const updateKeyValueList = (value: KeyValuePairType[]) => {
         const sortedArray = value.sort((a, b) => {
