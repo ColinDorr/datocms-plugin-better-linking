@@ -11,8 +11,8 @@ type PropTypes = {
 };
 
 export default function FieldConfigScreen({ ctx }: PropTypes) {
-    const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(true);
-    const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(true);
+    const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(false);
+    const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(false);
 
     return (
         <Canvas ctx={ctx}>

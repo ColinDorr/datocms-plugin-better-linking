@@ -34,13 +34,16 @@ type ContentSettings = {
 export default function ContentConigScreen({ ctx }: PropTypes) {
     // Retrieve parameters from context
     const ctxFieldParameters: any = getCtxParams(ctx, "field_settings");
+    const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
     const ctxParameters: any = getCtxParams(ctx, "content_settings");
 
     // List field settings data
-    const boundSchemaModels: string[] = ctx?.field?.attributes?.validators?.item_item_type?.item_types || [] // Homepage, singles etc.
+    const localized = ctx.field.attributes.localized || false
+
+    const itemTypes = ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
     let linkTypeOptions: LinkType[] = ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
 
-    if( boundSchemaModels.length === 0) {
+    if( itemTypes.length === 0) {
         linkTypeOptions = linkTypeOptions.filter(e => e.value !== "record")
     }
 
@@ -72,35 +75,39 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         }
         setContentSettings(newSettings);
 
-        Log({
-            call : "updateContentSettings",
-            valueObject,
-            newSettings,
+        // Log({
+        //     call : "updateContentSettings",
+        //     valueObject,
+        //     newSettings,
+        //     ctx
+        // });
+
+        const currentFieldValue:any = ctx.formValues[ctx.field.attributes.api_key];
+        const newFieldValue = localized ? {
+            ...currentFieldValue,
+            [locale] : newSettings
+        } : newSettings;
+
+        ctx.setFieldValue(ctx.formValues[ctx.field.attributes.api_key], JSON.stringify(newSettings) );
+
+
+        console.log({
+            fieldPath: ctx.fieldPath,
+            value: ctx.formValues[ctx.field.attributes.api_key],
             ctx
-        });
+        })
+
+        
+        // ctx.setFieldValue(ctx.fieldPath, "banaan_123");
+
+
+        // ctx.setFieldValue("banaan", "JSON.stringify(newFieldValue) ")
+        // console.log(ctx.formValues)
 
         // Log(valueObject)
         // await ctx.setFieldValue(valueObject)
         // ctx.parameters = newSettings
         // console.log({params: ctx.parameters })
-        
-
-        // console.log({contentSettings})
-        // const updatedParameters = {
-        //     ...ctxParameters,
-        //     contentSettings: {
-        //         ...contentSettings
-        //     }
-        // };
-        // ctx.updatePluginParameters(updatedParameters);
-        // ctx.parameters = updatedParameters
-        // // ctx.setParameters({
-        // //     contentSettings: contentSettings
-        // // });
-        // Log({
-        //     parameters : ctx.parameters
-        // })
-        // Log({ctx, updatedParameters, contentSettings})
     }
 
     return (
@@ -140,6 +147,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                             <FieldRecord
                                 ctx={ctx} 
                                 ctxFieldParameters={ctxFieldParameters}
+                                ctxPluginParameters={ctxPluginParameters}
                                 savedFieldSettings={contentSettings.recordData}
                                 onValueUpdate={(value: any) => updateContentSettings({"recordData": value})}
                                 locale={locale} 

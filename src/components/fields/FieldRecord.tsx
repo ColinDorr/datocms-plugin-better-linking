@@ -24,6 +24,7 @@ const resetObject: FieldSettings = {
 type Props = {
     ctx: any;
     ctxFieldParameters: any;
+    ctxPluginParameters: any;
     savedFieldSettings: FieldSettings;
     locale: string | null;
     onValueUpdate: (value: any) => void;
@@ -31,28 +32,10 @@ type Props = {
 
 const defaultLinkType: LinkType = { label: "--select--", value: "", api_key: "" };
 
-const FieldRecord: React.FC<Props> = ({ ctx, ctxFieldParameters, savedFieldSettings, locale, onValueUpdate }) => {
+const FieldRecord: React.FC<Props> = ({ ctx, ctxFieldParameters, ctxPluginParameters, savedFieldSettings, locale, onValueUpdate }) => {
     const [fieldSettings, setFieldSettings] = useState<FieldSettings>(savedFieldSettings);
 
-    const itemTypes = ctx.itemTypes || [];
-    const boundSchemaModels: string[] = ctx?.field?.attributes?.validators?.item_item_type?.item_types || [];
-
-    const RecordDropdownOptions: LinkType[] = (() => {
-        const optionsWithApi_key: LinkType[] = [];
-        boundSchemaModels.forEach(model => {
-            if (itemTypes?.[model] !== undefined) {
-                optionsWithApi_key.push({
-                    label: itemTypes[model].attributes.name,
-                    value: itemTypes[model].id,
-                    api_key: itemTypes[model].attributes.api_key
-                });
-            }
-        });
-
-        const sortedOptions = optionsWithApi_key.sort((a, b) => a.label.localeCompare(b.label));
-
-        return [defaultLinkType, ...sortedOptions];
-    })();
+    const itemTypes = ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
 
     const updateRecordValue = (record: any) => {
         let recordData: FieldSettings = { ...resetObject };
@@ -116,7 +99,7 @@ const FieldRecord: React.FC<Props> = ({ ctx, ctxFieldParameters, savedFieldSetti
                 label="Record"
                 value={defaultLinkType}
                 selectInputProps={{
-                    options: RecordDropdownOptions,
+                    options: itemTypes,
                 }}
                 onChange={(newValue: any) => getRecordOfType(newValue)}
             />

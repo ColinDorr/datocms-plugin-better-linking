@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Canvas, Section } from "datocms-react-ui";
-import { RenderConfigScreenCtx } from "datocms-plugin-sdk";
 
 import LinkSettings from './../components/controlls/linkSetting';
 import StylingSettings from './../components/controlls/stylingSettings';
 import styles from "./styles/styles.PluginConfigScreen.module.css";
 
 type Props = {
-    ctx: RenderConfigScreenCtx;
+    ctx: any;
 };
+
 export default function PluginConfigScreen({ ctx }: Props) {
     const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(true);
     const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(true);
@@ -35,6 +35,7 @@ export default function PluginConfigScreen({ ctx }: Props) {
                         ctx={ctx} 
                         configType="plugin_settings" 
                     />
+                    
                 </Section>
                 <Section
                     title="Styling settings"

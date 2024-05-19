@@ -25,7 +25,7 @@ connect({
         id: 'linkit',
         name: 'Linkit',
         type: 'editor',
-        fieldTypes: ['link'],
+        fieldTypes: ['link', 'json'],
         configurable: true,
       },
     ];
@@ -33,8 +33,9 @@ connect({
 
   // Add field editor "Linkit" to link field appearences
   overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
+    console.log(field.attributes.field_type)
     if (
-      field.attributes.field_type === "link" 
+      (field.attributes.field_type === "link" || field.attributes.field_type === "json" )
       && field.attributes.appearance?.field_extension === "linkit"
     ) {
       return {
