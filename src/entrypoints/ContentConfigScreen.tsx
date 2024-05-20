@@ -9,6 +9,7 @@ import FieldRecord from "./../components/fields/FieldRecord";
 import FieldTel from "./../components/fields/FieldTel";
 import FieldEmail from "./../components/fields/FieldEmail";
 import FieldUrl from "./../components/fields/FieldUrl";
+import internal from 'stream';
 
 const { getCtxParams, getDefaultValue } = Helpers();
 
@@ -21,11 +22,11 @@ type StylingType = { label: string, value: string };
 
 type ContentSettings = {
     linkType: LinkType, 
-    recordData: any, 
-    assetData: any, 
-    urlData: any, 
-    telData: any, 
-    emailData: any, 
+    record: any, 
+    asset: any, 
+    url: any, 
+    tel: any, 
+    email: any, 
     stylingType: StylingType, 
     custom_text: string,
     open_in_new_window: boolean
@@ -38,8 +39,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const ctxParameters: any = getCtxParams(ctx, "content_settings");
 
     // List field settings data
-    const localized = ctx.field.attributes.localized || false
-
     const itemTypes = ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
     let linkTypeOptions: LinkType[] = ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
 
@@ -54,13 +53,20 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const allowNewTarget = ctxFieldParameters?.allow_new_target || true;
     const allowCustomText = ctxFieldParameters?.allow_custom_text || true;
 
+    const defaultRecord = { "id": null,  "title": null,  "cms_url": null, "slug": null, "status": null,  "url": null };
+    const defaultAsset = { "id": null,  "title": null,  "cms_url": null, "slug": null, "status": null,  "url": null };
+    const defaultUrl = { "title": null, "url": null };
+    const defaultTel = { "title": null, "url": null };
+    const defaultEmail = { "title": null, "url": null };
+    const defaultResult = { "text": null, "url": null, "target": null, internal: null }
+
     const savedContentSettings: ContentSettings = {
         linkType: getDefaultValue(ctxParameters, "linkType", linkTypeOptions?.[0] || defaultLinkType ), 
-        recordData: getDefaultValue(ctxParameters, "recordData", "" ), 
-        assetData: getDefaultValue(ctxParameters, "assetData", "" ), 
-        urlData: getDefaultValue(ctxParameters, "urlData", "" ), 
-        telData: getDefaultValue(ctxParameters, "telData", "" ), 
-        emailData: getDefaultValue(ctxParameters, "emailData", "" ),  
+        record: getDefaultValue(ctxParameters, "record", defaultRecord ), 
+        asset: getDefaultValue(ctxParameters, "asset", defaultAsset ), 
+        url: getDefaultValue(ctxParameters, "url", defaultUrl ), 
+        tel: getDefaultValue(ctxParameters, "tel", defaultTel ), 
+        email: getDefaultValue(ctxParameters, "email", defaultEmail ),  
         stylingType: getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ), 
         custom_text: getDefaultValue(ctxParameters, "custom_text", "" ),
         open_in_new_window: getDefaultValue(ctxParameters, "open_in_new_window", false )
@@ -68,46 +74,38 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const [contentSettings, setContentSettings] = useState<ContentSettings>(savedContentSettings);
 
     // // Function to update content settings
+    console.log({savedContentSettings})
     const updateContentSettings = async ( valueObject: object ) => {
-        const newSettings = {
+        
+        const data = {
             ...contentSettings,
             ...valueObject
+        } as any;
+      
+        const selectedType: string = data.linkType.value;
+        const formatted = {
+            isValid: false,
+            text: data?.custom_text || data?.[selectedType]?.title || null,
+            url: data?.[selectedType]?.url || null,
+            target: data?.open_in_new_window ? '_blank' : '_self',
+            internal: selectedType === 'record'
+        };
+        formatted.isValid = formatted.text && formatted.url;
+
+        const newSettings = {
+            ...data, 
+            formatted
         }
+
         setContentSettings(newSettings);
 
-        // Log({
-        //     call : "updateContentSettings",
-        //     valueObject,
-        //     newSettings,
-        //     ctx
-        // });
+        ctx.setFieldValue(ctx.fieldPath, JSON.stringify(newSettings) );
 
-        const currentFieldValue:any = ctx.formValues[ctx.field.attributes.api_key];
-        const newFieldValue = localized ? {
-            ...currentFieldValue,
-            [locale] : newSettings
-        } : newSettings;
-
-        ctx.setFieldValue(ctx.formValues[ctx.field.attributes.api_key], JSON.stringify(newSettings) );
-
-
-        console.log({
-            fieldPath: ctx.fieldPath,
-            value: ctx.formValues[ctx.field.attributes.api_key],
+        Log({
+            call : "updateContentSettings",
+            newSettings,
             ctx
-        })
-
-        
-        // ctx.setFieldValue(ctx.fieldPath, "banaan_123");
-
-
-        // ctx.setFieldValue("banaan", "JSON.stringify(newFieldValue) ")
-        // console.log(ctx.formValues)
-
-        // Log(valueObject)
-        // await ctx.setFieldValue(valueObject)
-        // ctx.parameters = newSettings
-        // console.log({params: ctx.parameters })
+        });
     }
 
     return (
@@ -148,36 +146,36 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                 ctx={ctx} 
                                 ctxFieldParameters={ctxFieldParameters}
                                 ctxPluginParameters={ctxPluginParameters}
-                                savedFieldSettings={contentSettings.recordData}
-                                onValueUpdate={(value: any) => updateContentSettings({"recordData": value})}
+                                savedFieldSettings={contentSettings.record}
+                                onValueUpdate={(value: any) => updateContentSettings({"record": value})}
                                 locale={locale} 
                             />                          
                         ) : contentSettings?.linkType?.value === "asset" ? (
                             // <p>asset</p>
                             <FieldAsset 
                                 ctx={ctx} 
-                                savedFieldSettings={contentSettings.assetData}
-                                onValueUpdate={(value: any) => updateContentSettings({"assetData": value})}
+                                savedFieldSettings={contentSettings.asset}
+                                onValueUpdate={(value: any) => updateContentSettings({"asset": value})}
                                 locale={locale} 
                             />
                             
                         ) : contentSettings?.linkType?.value === "url" ? (
                             <FieldUrl
                                 ctx={ctx} 
-                                savedFieldSettings={contentSettings.urlData}
-                                onValueUpdate={(value: any) => updateContentSettings({"urlData": value})}
+                                savedFieldSettings={contentSettings.url}
+                                onValueUpdate={(value: any) => updateContentSettings({"url": value})}
                             />
                         ) : contentSettings?.linkType?.value === "tel" ? (
                             <FieldTel
                                 ctx={ctx} 
-                                savedFieldSettings={contentSettings.telData}
-                                onValueUpdate={(value: any) => updateContentSettings({"telData": value})}
+                                savedFieldSettings={contentSettings.tel}
+                                onValueUpdate={(value: any) => updateContentSettings({"tel": value})}
                             />
                         ) : contentSettings?.linkType?.value === "email" ? (
                             <FieldEmail
                                 ctx={ctx} 
-                                savedFieldSettings={contentSettings.emailData}
-                                onValueUpdate={(value: any) => updateContentSettings({"emailData": value})}
+                                savedFieldSettings={contentSettings.email}
+                                onValueUpdate={(value: any) => updateContentSettings({"email": value})}
                             />
                         ) : null }
                         { allowCustomText && (

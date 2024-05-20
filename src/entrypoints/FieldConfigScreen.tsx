@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Canvas, Section } from "datocms-react-ui";
+import { Canvas, Section, Button } from "datocms-react-ui";
 import { RenderManualFieldExtensionConfigScreenCtx } from "datocms-plugin-sdk";
+import Helpers from "./../utils/helpers";
 
 import LinkSettings from './../components/controlls/linkSetting';
 import StylingSettings from './../components/controlls/stylingSettings';
@@ -9,11 +10,14 @@ import styles from "./styles/styles.FieldConfigScreen.module.css";
 type PropTypes = {
   ctx: RenderManualFieldExtensionConfigScreenCtx;
 };
+const { getCtxParams } = Helpers();
 
 export default function FieldConfigScreen({ ctx }: PropTypes) {
     const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(false);
     const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(false);
+    const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 
+    console.log({ctxPluginParameters})
     return (
         <Canvas ctx={ctx}>
             <Section
@@ -40,6 +44,19 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
                     configType="field_settings"
                 />
             </Section>
+
+            <Button 
+                    fullWidth
+                    buttonType="primary"
+                    onClick={
+                        () => {
+                            ctx.setParameters({ field_settings: ctxPluginParameters });
+                            console.log(ctx)
+                        }
+                    }
+                >
+                    Reset to Plugin default settings
+                </Button>
         </Canvas>
     );
 }

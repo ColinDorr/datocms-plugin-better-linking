@@ -60,6 +60,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
     const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(savedLinkFieldSettings);
 
+    console.log(ctx.parameters)
     const updateCtx = async () => {
         const settings: { [key: string]: any } = {};
         const linkTypeOptions: any[] = [];
@@ -73,10 +74,16 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
         settings.linkTypeOptions = linkTypeOptions;
 
+        const newSettings = {
+            ...ctxParameters,
+            ...settings,
+            linkTypeOptions: linkTypeOptions
+        }
+
         if (configType === "plugin_settings") {
-            ctx.updatePluginParameters(settings);
+            ctx.updatePluginParameters(newSettings);
         } else if (configType === "field_settings") {
-            ctx.setParameters({ field_settings: settings });
+            ctx.setParameters({ field_settings: newSettings });
         }
 
         Log({ [`New Settings: ${configType}`]: settings });
@@ -112,7 +119,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                 />
 
                 <FieldGroup>
-                    {configSettings.slice(0, -2).map((param: ConfigSetting) => (
+                    {configSettings.slice(0, -3).map((param: ConfigSetting) => (
                         <div key={param.id}>
                             <SwitchField
                                 id={param.id}
@@ -134,7 +141,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                 </FieldGroup>
                 <br/>
                 <FieldGroup>
-                    {configSettings.slice(-2).map((param: ConfigSetting) => (
+                    {configSettings.slice(-3, -1).map((param: ConfigSetting) => (
                         <div key={param.id}>
                             <SwitchField
                                 id={param.id}

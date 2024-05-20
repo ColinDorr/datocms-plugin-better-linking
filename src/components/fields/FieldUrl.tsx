@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import {TextField } from "datocms-react-ui";
 
 type FieldSettings = {
-    label: string;
+    title: string;
     url: string;
 };
 
 const resetObject: FieldSettings = {
-    label: "URL",
+    title: "URL",
     url: "",
 };
 
@@ -37,8 +37,8 @@ const FieldUrl: React.FC<Props> = ({ ctx, savedFieldSettings, onValueUpdate }) =
         <TextField
             name="link"
             id="link"
-            label={ fieldSettings.label || resetObject.label }
-            value={ fieldSettings.url || resetObject.url }
+            label={ fieldSettings?.title || resetObject.title }
+            value={ fieldSettings?.url || resetObject.url }
             textInputProps={{ monospaced: true }}
             onChange={(newValue) => {
                 updateValue({url: newValue})
