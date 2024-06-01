@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Canvas, Form, FieldGroup, SelectField, SwitchField, TextField } from "datocms-react-ui";
 import Log from "./../utils/develop";
 import Helpers from "./../utils/helpers";
-import styles from "./styles/styles.ContentConfigScreen.module.css";
 
 import FieldAsset from "./../components/fields/FieldAsset";
 import FieldRecord from "./../components/fields/FieldRecord";
 import FieldTel from "./../components/fields/FieldTel";
 import FieldEmail from "./../components/fields/FieldEmail";
 import FieldUrl from "./../components/fields/FieldUrl";
+
+import styles from "../styles/styles.ContentConfigScreen.module.css";
 
 const { getCtxParams, getDefaultValue } = Helpers();
 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Form, FieldGroup, SelectField, SwitchField, Button } from "datocms-react-ui";
-import Log from "./../../utils/develop";
-import Helpers from "./../../utils/helpers";
-import { ItemType } from 'datocms-plugin-sdk';
+import Log from "../../utils/develop";
+import Helpers from "../../utils/helpers";
+
+import styles from "./../../styles/styles.LinkSettings.module.css";
+
 
 const { getCtxParams, getDefaultValue } = Helpers();
 
@@ -91,11 +93,14 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
     return (
         <div>
-            <Form onSubmit={updateCtx}>
+            <Form 
+                onSubmit={updateCtx}
+                className={ styles["link-settings__form"]}
+            >
                 <SelectField
                     name="styling"
                     id="styling"
-                    label="Record"
+                    label="Allowed Records"
                     value={(configSettings.find(setting => setting.id === "itemTypes")?.value as LinkType[]) || []}
                     selectInputProps={{
                         isMulti: true,
@@ -118,9 +123,9 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                     }
                 />
 
-                <FieldGroup>
+                <FieldGroup className={ styles["link-settings__link-types"] }>
                     {configSettings.slice(0, -3).map((param: ConfigSetting) => (
-                        <div key={param.id}>
+                        <div key={param.id} className={ styles["link-settings__link-type-item"] }>
                             <SwitchField
                                 id={param.id}
                                 name={param.id}
@@ -139,10 +144,9 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                         </div>
                     ))}
                 </FieldGroup>
-                <br/>
-                <FieldGroup>
+                <FieldGroup className={ styles["link-settings__link-controlls"] }>
                     {configSettings.slice(-3, -1).map((param: ConfigSetting) => (
-                        <div key={param.id}>
+                        <div key={param.id} className={ styles["link-settings__link-control-item"] }>
                             <SwitchField
                                 id={param.id}
                                 name={param.id}
@@ -163,7 +167,11 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                 </FieldGroup>
 
                 <FieldGroup>
-                    <Button type="submit" fullWidth buttonType="primary">
+                    <Button 
+                        fullWidth 
+                        type="submit" 
+                        buttonType="primary"
+                    >
                         Save link settings
                     </Button>
                 </FieldGroup>

@@ -4,7 +4,7 @@ import { Canvas, Section } from "datocms-react-ui";
 import LinkSettings from './../components/controlls/LinkSettings';
 import StylingSettings from './../components/controlls/StylingSettings';
 
-import styles from "./styles/styles.PluginConfigScreen.module.css";
+import styles from "../styles/styles.PluginConfigScreen.module.css";
 
 type Props = {
     ctx: any;
