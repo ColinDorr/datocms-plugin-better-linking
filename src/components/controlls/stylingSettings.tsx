@@ -4,7 +4,7 @@ import Log from "./../../utils/develop";
 import StylingItem from './partials/StylingItem';
 import Helpers from "./../../utils/helpers";
 
-import styles from "./../../styles/styles.LinkSettings.module.css";
+import styles from "./../../styles/styles.StylingSettings.module.css";
 
 const { getCtxParams, getDefaultValue } = Helpers();
 
@@ -130,20 +130,18 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
                 <FieldGroup 
                     className={ styles["style-settings__controlls"] }
                 >
-                    <ul>
-                        {keyValueList.map((item: KeyValuePairType, index: number) => (
-                            <StylingItem
-                                key={item.id}
-                                item={item}
-                                onIdChange={(value: number) => handleIdChange(value, index)}
-                                onLabelChange={(value: string) => handleLabelChange(value, index)}
-                                onValueChange={(value: string) => handleValueChange(value, index)}
-                                onDelete={() => deleteItem(index)}
-                                duplicateArrays={duplicateArrays()}
-                                isRequired={true}
-                            />
-                        ))}
-                    </ul>
+                    {keyValueList.map((item: KeyValuePairType, index: number) => (
+                        <StylingItem
+                            key={item.id}
+                            item={item}
+                            onIdChange={(value: number) => handleIdChange(value, index)}
+                            onLabelChange={(value: string) => handleLabelChange(value, index)}
+                            onValueChange={(value: string) => handleValueChange(value, index)}
+                            onDelete={() => deleteItem(index)}
+                            duplicateArrays={duplicateArrays()}
+                            isRequired={true}
+                        />
+                    ))}
                 </FieldGroup>
 
                 
@@ -169,10 +167,11 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
                         fullWidth 
                         type="submit" 
                         buttonType="primary"
+                        className={ styles["style-settings__submit"] }
                     >
                         Save styling settings
                     </Button>
-                    {containsDuplicates() || true && (
+                    {containsDuplicates() && (
                         <p className={ styles["style-settings__error"] }>
                             All keys need to be unique. Saving this can result in data loss.
                         </p>

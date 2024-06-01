@@ -4,8 +4,6 @@ import { Canvas, Section } from "datocms-react-ui";
 import LinkSettings from './../components/controlls/LinkSettings';
 import StylingSettings from './../components/controlls/StylingSettings';
 
-import styles from "../styles/styles.PluginConfigScreen.module.css";
-
 type Props = {
     ctx: any;
 };
@@ -16,15 +14,17 @@ export default function PluginConfigScreen({ ctx }: Props) {
 
     return (
         <Canvas ctx={ctx}>
-            <p>Welcome to your plugin! This is your config screen!</p>
+            <div className="content">
+                <p>Welcome to your plugin! This is your config screen!</p>
+            </div>
 
-            <h2>Usage</h2>
-            {/* <div>
-                <ContextInspector />
-            </div> */}
-
-            <h2>Settings</h2>
             <div>
+                <h2>Installation</h2>
+                <p>Welcome to your plugin! This is your config screen!</p>
+            </div>
+
+            <div>
+                <h2>Settings</h2>
                 <Section
                     title="Link setting"
                     collapsible={{ 
@@ -51,6 +51,9 @@ export default function PluginConfigScreen({ ctx }: Props) {
                     />
                 </Section>
             </div>
+
+
+            
         </Canvas>
     );
 }

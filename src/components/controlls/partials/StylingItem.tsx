@@ -1,4 +1,5 @@
 import { Button, TextField, FieldGroup } from 'datocms-react-ui';
+import styles from "./../../../styles/styles.StylingSettings.module.css";
 
 type ItemType = { id: number, label: string, value: string };
 type Props = {
@@ -31,16 +32,16 @@ export default function StylingItem({
         onIdChange(newId);
     }
     
-    
     return (
-        <li>
-            <FieldGroup>
+        <div className={ styles["style-settings__controll-item"] }>
+            <FieldGroup className={ styles["style-settings__controll-texts"] }>
                 <TextField
                     required={isRequired}
                     error={(isRequired && item.label === '') || exsistingLabel ? 'Label already exists' : ''}
                     name={`${item.id}-label`}
                     id={`${item.id}-label`}
-                    label="Label needs to be a unique string value"
+                    label="Label"
+                    placeholder="Label"
                     value={item.label}
                     onChange={ onLabelChange }
                     formLabelProps={{
@@ -54,7 +55,8 @@ export default function StylingItem({
                     error={(isRequired && item.value === '') || exsistingValue ? 'Value is required' : ''}
                     name={`${item.id}-value`}
                     id={`${item.id}-value`}
-                    label="Value needs to be a unique string value"
+                    label="Value"
+                    placeholder="Value"
                     value={item.value}
                     onChange={onValueChange}
                     formLabelProps={{
@@ -88,6 +90,6 @@ export default function StylingItem({
                     onClick={() => onDelete(item.id)}
                 />
             </FieldGroup>
-        </li>
+        </div>
     );
 };

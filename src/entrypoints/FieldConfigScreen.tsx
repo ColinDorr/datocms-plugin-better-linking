@@ -6,8 +6,6 @@ import Helpers from "./../utils/helpers";
 import LinkSettings from './../components/controlls/LinkSettings';
 import StylingSettings from './../components/controlls/StylingSettings';
 
-import styles from "../styles/styles.FieldConfigScreen.module.css";
-
 type PropTypes = {
   ctx: RenderManualFieldExtensionConfigScreenCtx;
 };

@@ -170,7 +170,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                 locale={locale} 
                             />                          
                         ) : contentSettings?.linkType?.value === "asset" ? (
-                            // <p>asset</p>
                             <FieldAsset 
                                 ctx={ctx} 
                                 savedFieldSettings={contentSettings.asset}
