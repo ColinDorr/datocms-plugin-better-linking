@@ -22,7 +22,7 @@ const FieldEmail: React.FC<Props> = ({ ctx, savedFieldSettings, onValueUpdate })
 
     // Manipulate Assets
     const updateValue = (newObject: any) => {
-        let url = newObject.url.replace(/[^\w@.-]/g, '').replace("mailto","");
+        let url = newObject.url ? newObject.url.replace(/[^\w@.-]/g, '').replace("mailto",""): "";
         url = `mailto:${url}`;
 
         const emailData: FieldSettings = { 

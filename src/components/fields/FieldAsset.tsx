@@ -4,7 +4,7 @@ import { FieldGroup, Button } from "datocms-react-ui";
 type FieldSettings = {
     id: string | null,
     title: string | null;
-    slug: string | null;
+    alt: string | null;
     url?: string | null;
     cms_url: string | null;
     status: string | null;
@@ -13,7 +13,7 @@ type FieldSettings = {
 const resetObject: FieldSettings = {
     id: null,
     title: null,
-    slug: null,
+    alt: null,
     url: null,
     cms_url: null,
     status: null,
@@ -31,16 +31,24 @@ const FieldAsset: React.FC<Props> = ({ ctx, savedFieldSettings, locale, onValueU
 
     // Manipulate Assets
     const updateAssetValue = (asset: any) => {
-       let assetData: FieldSettings = { ...resetObject };
+        let assetData: FieldSettings = { ...resetObject };
         const id = asset?.id || null;
-        const title = (locale ? asset?.attributes?.filename?.[locale] : asset?.attributes?.filename) || asset?.attributes?.filename || null;
-        const cms_url = ctx?.site?.attributes?.internal_domain && asset?.id ? `https://${ctx.site.attributes.internal_domain}/media/assets/${asset.id}` : null;
-        const slug = asset?.attributes?.url || null;
+        const title = (locale ? asset?.attributes?.default_field_metadata?.[locale]?.title : asset?.attributes?.default_field_metadata?.title ) || asset?.attributes?.filename || null;
+        const altText = (locale ? asset?.attributes?.default_field_metadata?.[locale]?.alt : asset?.attributes?.default_field_metadata?.alt ) || null;
+        const filename =  asset?.attributes?.filename || null;
+        const cms_url = asset?.attributes?.url || (ctx?.site?.attributes?.internal_domain && asset?.id ? `https://${ctx.site.attributes.internal_domain}/media/assets/${asset.id}` : null);
+        const url = asset?.attributes?.url || null;
         const status = "published";
-        const url = slug;
 
-        if (id && title && cms_url && slug && status && url) {
-            assetData = { id, title, cms_url, slug, status, url };
+        if (id && (title || filename) && cms_url && status && url) {
+            assetData = { 
+                id, 
+                title: title || filename,
+                alt: altText || title || filename,
+                cms_url,
+                status, 
+                url 
+            };
         }
         
         setFieldSettings(assetData);

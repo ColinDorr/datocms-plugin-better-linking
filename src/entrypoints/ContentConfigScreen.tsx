@@ -9,7 +9,6 @@ import FieldRecord from "./../components/fields/FieldRecord";
 import FieldTel from "./../components/fields/FieldTel";
 import FieldEmail from "./../components/fields/FieldEmail";
 import FieldUrl from "./../components/fields/FieldUrl";
-import internal from 'stream';
 
 const { getCtxParams, getDefaultValue } = Helpers();
 
@@ -22,14 +21,16 @@ type StylingType = { label: string, value: string };
 
 type ContentSettings = {
     linkType: LinkType, 
+    stylingType: StylingType, 
+    open_in_new_window: boolean,
+    custom_text: string,
+
     record: any, 
     asset: any, 
     url: any, 
     tel: any, 
-    email: any, 
-    stylingType: StylingType, 
-    custom_text: string,
-    open_in_new_window: boolean
+    email: any,
+    
  };
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
@@ -62,19 +63,19 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
     const savedContentSettings: ContentSettings = {
         linkType: getDefaultValue(ctxParameters, "linkType", linkTypeOptions?.[0] || defaultLinkType ), 
+        stylingType: getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ), 
+        open_in_new_window: getDefaultValue(ctxParameters, "open_in_new_window", false ),
+        custom_text: getDefaultValue(ctxParameters, "custom_text", "" ),
+        
         record: getDefaultValue(ctxParameters, "record", defaultRecord ), 
         asset: getDefaultValue(ctxParameters, "asset", defaultAsset ), 
         url: getDefaultValue(ctxParameters, "url", defaultUrl ), 
         tel: getDefaultValue(ctxParameters, "tel", defaultTel ), 
         email: getDefaultValue(ctxParameters, "email", defaultEmail ),  
-        stylingType: getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ), 
-        custom_text: getDefaultValue(ctxParameters, "custom_text", "" ),
-        open_in_new_window: getDefaultValue(ctxParameters, "open_in_new_window", false )
     };
     const [contentSettings, setContentSettings] = useState<ContentSettings>(savedContentSettings);
 
     // // Function to update content settings
-    console.log({savedContentSettings})
     const updateContentSettings = async ( valueObject: object ) => {
         
         const data = {
@@ -83,18 +84,35 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         } as any;
       
         const selectedType: string = data.linkType.value;
+
+        const getText = (data: any, selectedType: string) => {
+            switch (selectedType) {
+                case "tel":
+                    return data?.custom_text || (data?.[selectedType]?.url ? data?.[selectedType]?.url.replace("tel:", "") : null) || null;
+                case "email":
+                    return data?.custom_text || (data?.[selectedType]?.url ? data?.[selectedType]?.url.replace("mailto:", "") : null) || null;
+                case "url":
+                    return data?.custom_text || data?.[selectedType]?.url || null;
+                default:
+                    return data?.custom_text || data?.[selectedType]?.title || null;
+            }
+        }
+
         const formatted = {
             isValid: false,
-            text: data?.custom_text || data?.[selectedType]?.title || null,
+            type: selectedType,
+            text: getText(data, selectedType),
             url: data?.[selectedType]?.url || null,
             target: data?.open_in_new_window ? '_blank' : '_self',
-            internal: selectedType === 'record'
+            class: data?.stylingType?.value || null,
         };
-        formatted.isValid = formatted.text && formatted.url;
+
+        formatted.isValid = formatted.text && formatted.url ? true : false;
 
         const newSettings = {
             ...data, 
-            formatted
+            isValid: formatted.isValid,
+            formatted : formatted.isValid ? formatted : null
         }
 
         setContentSettings(newSettings);

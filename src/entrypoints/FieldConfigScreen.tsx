@@ -3,8 +3,9 @@ import { Canvas, Section, Button } from "datocms-react-ui";
 import { RenderManualFieldExtensionConfigScreenCtx } from "datocms-plugin-sdk";
 import Helpers from "./../utils/helpers";
 
-import LinkSettings from './../components/controlls/linkSetting';
-import StylingSettings from './../components/controlls/stylingSettings';
+import LinkSettings from './../components/controlls/LinkSettings';
+import StylingSettings from './../components/controlls/StylingSettings';
+
 import styles from "./styles/styles.FieldConfigScreen.module.css";
 
 type PropTypes = {
