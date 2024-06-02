@@ -16,7 +16,6 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
     const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(false);
     const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 
-    console.log({ctxPluginParameters})
     return (
         <Canvas ctx={ctx}>
             <Section
@@ -48,10 +47,7 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
                     fullWidth
                     buttonType="primary"
                     onClick={
-                        () => {
-                            ctx.setParameters({ field_settings: ctxPluginParameters });
-                            console.log(ctx)
-                        }
+                        () => {ctx.setParameters({ field_settings: ctxPluginParameters }); } 
                     }
                 >
                     Reset to Plugin default settings

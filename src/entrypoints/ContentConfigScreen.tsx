@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Canvas, Form, FieldGroup, SelectField, SwitchField, TextField } from "datocms-react-ui";
-import Log from "./../utils/develop";
 import Helpers from "./../utils/helpers";
 
 import FieldAsset from "./../components/fields/FieldAsset";
@@ -60,7 +59,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const defaultUrl = { "title": null, "url": null };
     const defaultTel = { "title": null, "url": null };
     const defaultEmail = { "title": null, "url": null };
-    const defaultResult = { "text": null, "url": null, "target": null, internal: null }
 
     const savedContentSettings: ContentSettings = {
         linkType: getDefaultValue(ctxParameters, "linkType", linkTypeOptions?.[0] || defaultLinkType ), 
@@ -76,9 +74,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     };
     const [contentSettings, setContentSettings] = useState<ContentSettings>(savedContentSettings);
 
-    // // Function to update content settings
     const updateContentSettings = async ( valueObject: object ) => {
-        
         const data = {
             ...contentSettings,
             ...valueObject
@@ -119,19 +115,13 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         setContentSettings(newSettings);
 
         ctx.setFieldValue(ctx.fieldPath, JSON.stringify(newSettings) );
-
-        Log({
-            call : "updateContentSettings",
-            newSettings,
-            ctx
-        });
     }
 
     return (
         <Canvas ctx={ctx}>
             {contentSettings.linkType?.value ? (
-                <Form className={ styles.linkit } onSubmit={() => console.log("onSubmit")}>
-                    <FieldGroup className={ styles.linkit__column }>
+                <Form className={ styles["link-field"] }>
+                    <FieldGroup className={ styles["link-filed__type-styling"] }>
                         <SelectField
                             name="type"
                             id="type"
@@ -159,7 +149,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                             />
                         )}
                     </FieldGroup>
-                    <FieldGroup className={ styles.linkit__column }>
+                    <FieldGroup className={ styles["link-field__link-text"] }>
                         {contentSettings.linkType.value === "record" ? (
                             <FieldRecord
                                 ctx={ctx} 
@@ -196,6 +186,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                 onValueUpdate={(value: any) => updateContentSettings({"email": value})}
                             />
                         ) : null }
+
+
                         { allowCustomText && (
                             <TextField
                                 name="custom_text"
@@ -209,8 +201,9 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                             />
                         )}
                     </FieldGroup>
-                    <FieldGroup className={ styles.linkit__column_top }>
-                        { allowNewTarget && (
+                    { allowNewTarget && (
+                        <FieldGroup className={ styles["link-field__target-column"] }>
+                            <p className={ styles["link-field__target-label"] }>Window</p>
                             <SwitchField
                                 name="open_in_new_window"
                                 id="open_in_new_window"
@@ -221,12 +214,12 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                                     updateContentSettings({"open_in_new_window": newValue})
                                 }}
                             />
-                        )} 
-                    </FieldGroup>
+                        </FieldGroup>
+                    )} 
                 </Form>
             ) : (
                 <div>
-                    <p><strong>Error!</strong><br/>No valid link types could be found for this field.<br/>Please add the wanted link types to the field appearence settings or the plugin settings</p>
+                    <p className={ styles["link-field__error"] }><strong>Error!</strong> No valid link types could be found for this field.<br/>Please add the wanted link types to the field appearence settings or the plugin settings</p>
                 </div>
             )}
         </Canvas>

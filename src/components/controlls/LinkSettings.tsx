@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Form, FieldGroup, SelectField, SwitchField, Button } from "datocms-react-ui";
-import Log from "../../utils/develop";
 import Helpers from "../../utils/helpers";
-
 import styles from "./../../styles/styles.LinkSettings.module.css";
-
 
 const { getCtxParams, getDefaultValue } = Helpers();
 
@@ -62,7 +59,6 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 
     const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(savedLinkFieldSettings);
 
-    console.log(ctx.parameters)
     const updateCtx = async () => {
         const settings: { [key: string]: any } = {};
         const linkTypeOptions: any[] = [];
@@ -87,8 +83,6 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
         } else if (configType === "field_settings") {
             ctx.setParameters({ field_settings: newSettings });
         }
-
-        Log({ [`New Settings: ${configType}`]: settings });
     };
 
     return (

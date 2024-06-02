@@ -22,7 +22,6 @@ const FieldTel: React.FC<Props> = ({ ctx, savedFieldSettings, onValueUpdate }) =
 
     // Manipulate Assets
     const updateValue = (newObject: any) => {
-        console.log(newObject.url)
         let url = newObject.url.replace(/[^\d\s()\-+]/g, '');
         url = `tel:${url}`
 

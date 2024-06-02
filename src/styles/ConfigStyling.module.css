@@ -1,4 +1,4 @@
-.linkit {
+/* .linkit {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-areas: "col1 col1 col2 col2 col2 col2 col2 col2 col3 col3";
@@ -7,7 +7,6 @@
     padding: 16px;
     border-radius: 8px;
     background: #f5f5f5;
-    /* background: red; */
 }
 .linkit__column,
 .linkit__column_top{
@@ -60,4 +59,4 @@
 
 .status-updated {
     color: var(--warning-color);
-}
+} */

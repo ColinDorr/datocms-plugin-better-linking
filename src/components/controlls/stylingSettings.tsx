@@ -1,6 +1,6 @@
 import React, { useState, MouseEvent } from 'react';
 import { Form, Button, FieldGroup} from 'datocms-react-ui';
-import Log from "./../../utils/develop";
+
 import StylingItem from './partials/StylingItem';
 import Helpers from "./../../utils/helpers";
 
@@ -39,8 +39,6 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
         } else if (configType === "field_settings") {
             ctx.setParameters({ field_settings: settings });
         }
-        
-        Log({[`New Styling: ${configType}`] : settings });
     };
 
 
