@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Canvas, Section, Button } from "datocms-react-ui";
 import { RenderManualFieldExtensionConfigScreenCtx } from "datocms-plugin-sdk";
-import Helpers from "./../utils/helpers";
+import Helpers from "../utils/helpers";
 
-import LinkSettings from './../components/controlls/LinkSettings';
-import StylingSettings from './../components/controlls/StylingSettings';
+import LinkSettings from '../components/controlls/LinkSettings';
+import StylingSettings from '../components/controlls/StylingSettings';
 
 type PropTypes = {
   ctx: RenderManualFieldExtensionConfigScreenCtx;
