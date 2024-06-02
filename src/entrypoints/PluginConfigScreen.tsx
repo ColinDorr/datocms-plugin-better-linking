@@ -51,9 +51,6 @@ export default function PluginConfigScreen({ ctx }: Props) {
                     />
                 </Section>
             </div>
-
-
-            
         </Canvas>
     );
 }

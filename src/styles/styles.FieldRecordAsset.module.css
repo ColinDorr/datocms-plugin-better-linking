@@ -69,3 +69,9 @@
     font-size: var(--font-size-l);
     font-weight: 400;  
 }
+
+.field__selection-group__button {
+    width: 100%;
+    font-size: var(--font-size-l);
+    padding: .4em 1em;
+}

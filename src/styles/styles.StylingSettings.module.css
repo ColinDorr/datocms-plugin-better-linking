@@ -29,6 +29,10 @@
 .style-settings__buttons > * {
     margin: 0;
 }
+.style-settings__buttons{
+    margin-top: var(--spacing-l);
+}
+
 .style-settings__error {
     color: var(--alert-color);
     font-size: var(--font-size-s);

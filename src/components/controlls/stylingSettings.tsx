@@ -142,8 +142,6 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
                     ))}
                 </FieldGroup>
 
-                
-
                 <FieldGroup className={ styles["style-settings__buttons"] }>
                     <Button
                         fullWidth
@@ -169,15 +167,15 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
                     >
                         Save styling settings
                     </Button>
-                    {containsDuplicates() && (
+                </FieldGroup>
+
+                {containsDuplicates() && (
+                    <FieldGroup className={ styles["style-settings__warinig"] }>
                         <p className={ styles["style-settings__error"] }>
                             All keys need to be unique. Saving this can result in data loss.
                         </p>
-                    )}
-
-                </FieldGroup>
-            
-            
+                    </FieldGroup>               
+                )}
             </Form>
 
         </div>
