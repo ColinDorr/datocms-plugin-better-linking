@@ -15,6 +15,11 @@ import PluginConfigScreen from './entrypoints/PluginConfigScreen';
 import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
 import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
 
+const fieldSettings = {
+  id: 'betterLinking',
+  name: 'Better Linking',
+}
+
 connect({
   renderConfigScreen(ctx) {
     return render(<PluginConfigScreen ctx={ctx} />);
@@ -22,8 +27,8 @@ connect({
   manualFieldExtensions(ctx: IntentCtx) {
     return [
       {
-        id: 'linkit',
-        name: 'Linkit',
+        id: fieldSettings.id,
+        name: fieldSettings.name,
         type: 'editor',
         fieldTypes: ['json'],
         configurable: true,
@@ -36,10 +41,12 @@ connect({
     console.log(field.attributes.field_type)
     if (
       (field.attributes.field_type === "json" )
-      && field.attributes.appearance?.field_extension === "linkit"
+      && field.attributes.appearance?.field_extension === fieldSettings.id
     ) {
       return {
-        editor: { id: 'linkit' },
+        editor: { 
+          id: fieldSettings.id 
+        },
       };
     }
   },
@@ -62,8 +69,7 @@ connect({
   // Render Field in records 
   renderFieldExtension(fieldExtensionId: string, ctx: RenderFieldExtensionCtx) {
     switch (fieldExtensionId) {
-      case 'linkit':
-        console.log(ctx)
+      case fieldSettings.id:
         return render(<ContentConfigScreen ctx={ctx} />);
     }
   },

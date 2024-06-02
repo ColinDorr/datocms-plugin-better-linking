@@ -1,7 +1,20 @@
 {
-  "name": "datocms-plugin-linkit",
-  "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "name": "datocms-plugin-better-linking",
+  "homepage": "https://github.com/ColinDorr/datocms-plugin-better-linking",
+  "version": "0.9.0",
+  "description": "This datoCMS plugin enables a custom UI, to have better controll over your record, assets, urls, telephone or email links",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  
+  "scripts": {
+    "start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
+    "build": "cross-env PUBLIC_URL='.' react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "@types/node": "^18.19.33",
     "@types/react": "^18.3.1",
@@ -13,12 +26,44 @@
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5"
   },
-  "scripts": {
-    "start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
-    "build": "cross-env PUBLIC_URL='.' react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "prepublishOnly": "npm run build"
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  },
+  "files": [
+    "build",
+    "docs"
+  ],
+  "keywords": [
+    "datocms",
+    "datocms-plugin",
+    "record",
+    "asset",
+    "url",
+    "tel",
+    "telephone",
+    "telephone number",
+    "email",
+    "target",
+    "custom text",
+    "new window",
+    "link",
+    "linkin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ColinDorr/datocms-plugin-computed-fields.git"
+  },
+  "author": "Colin Dorr",
+  "license": "ISC",
+
+  "datoCmsPlugin": {
+    "title": "Better Linking",
+    "previewImage": "docs/preview.gif",
+    "coverImage": "docs/cover.png",
+    "entryPoint": "build/index.html",
+    "permissions": [
+      "currentUserAccessToken"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -36,14 +81,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
-  },
-  "datoCmsPlugin": {
-    "title": "",
-    "previewImage": "",
-    "coverImage": "",
-    "entryPoint": "build/index.html"
   }
 }

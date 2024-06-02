@@ -1,30 +1,22 @@
-# [Your plugin name]
+# DatoCMS plugin: Better Linking
+Welcome to the `Better Linking` plugin!
+This DatoCMS plugin allows you to easily create a complex link field, containing different link types (records, assets, URLs, email links, or telephone numbers), custom styling, control over the link target, and the ability to override the link text with a custom value.</
 
-[Describe what your plugin does, and how users you can configure it! Screenshots are always welcome!]
+## Installation
+- Install the plugin.
+- Go to the plugin and fill in the `Link Settings` and `Styling Settings`. These values will be your default link field values.
+- Create a new JSON field.
+- Fill in your preferred name, fieldId, and localization (leave all other fields empty for now).
+- Go to `Presentation` and choose the `Better Linking` appearance.
+- Optionally, go to the `Link Settings` and `Styling Settings` to override the default values.
+- Save the settings and the field.
+- You can now add this field to your site and start using it.
 
+## How it works
+After installing the plugin and creating a new field (see installation instructions), you can start using the new `Better Linking` field. `Better Linking` allows you to set default settings in the plugin window and customize those settings for each field in the field appearance window. The settings of the plugin, field, and its content will be saved as a JSON object.
+The JSON data will be hidden in the CMS/frontend and will be replaced with a user-friendly UI, which helps the user to easily create a link with customized data, giving them more control over their links.
 
-
-## TODO
-
-### Configuration
-- [X] Add Linkit as entries link type
-- [X] Add controls to choose access to records, asset, urls, tel, mail, target
-- [X] Add custom styling table controls (label, value, default)
-- [] Make field setting, field specific, based on field ID. To prevent fields all using the same styling
-
-### Input
-- [] Render field layout 
-    ----------------------------------------------------------------------------------
-    |   [ Dropdown type ]   [ Record/url/tel/mail input field ] [ checkbox target ] 
-    |   [ Styling type  ]   [ Custom Text field               ]
-     ----------------------------------------------------------------------------------
-- [] Allow user to select link type, add custom text/ or title/link as default, target toggle, styling dropdown
-- [] Save data as usabel data object { url, text, target, date-style }
-- [] allow removing of field
-- [] Allow drag and drop
-
-### Rendering
-- [] Render Field as stand alone field
-- [] Render field as repeatable field
-- [] Render field as rich text field
-
+## Development
+When using the plugin, a JSON data object will be generated with all the settings and filled-in content. This data will be hidden in the CMS/frontend but is accessible using GraphQL and the CDA Playground.
+When querying the data of a `Better Linking` field, the whole JSON data object will be returned, containing all the data and selected options, allowing developers full access to the detailed information of the link.
+This might look a bit intimidating at first glance, but don't be scared. In the JSON data object, you will also find an object called `formatted`. This object contains a minimized representation of all link data. In most cases, this data will be more than enough to handle your links.
