@@ -7,7 +7,6 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  
   "scripts": {
     "start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
     "build": "cross-env PUBLIC_URL='.' react-scripts build",
@@ -52,11 +51,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ColinDorr/datocms-plugin-better-linking.git"
+    "url": "git+https://github.com/ColinDorr/datocms-plugin-better-linking.git"
   },
   "author": "Colin Dorr",
   "license": "ISC",
-
   "datoCmsPlugin": {
     "title": "Better Linking",
     "previewImage": "docs/preview.png",
