@@ -2,7 +2,7 @@
   "private": false,
   "name": "datocms-plugin-better-linking",
   "homepage": "https://github.com/ColinDorr/datocms-plugin-better-linking",
-  "version": "0.9.0",
+  "version": "0.1.0",
   "description": "This datoCMS plugin enables a custom UI, to have better controll over your record, assets, urls, telephone or email links",
   "engines": {
     "node": ">=20.0.0"
@@ -34,20 +34,21 @@
     "docs"
   ],
   "keywords": [
-    "datocms",
     "datocms-plugin",
+    "datocms",
     "record",
     "asset",
     "url",
     "tel",
     "telephone",
     "telephone number",
+    "phone number",
     "email",
     "target",
     "custom text",
     "new window",
     "link",
-    "linkin"
+    "linking"
   ],
   "repository": {
     "type": "git",
@@ -58,7 +59,7 @@
 
   "datoCmsPlugin": {
     "title": "Better Linking",
-    "previewImage": "docs/preview.gif",
+    "previewImage": "docs/preview.png",
     "coverImage": "docs/cover.png",
     "entryPoint": "build/index.html",
     "permissions": [
