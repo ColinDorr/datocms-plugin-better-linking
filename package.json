@@ -2,7 +2,7 @@
   "private": false,
   "name": "datocms-plugin-better-linking",
   "homepage": "https://github.com/ColinDorr/datocms-plugin-better-linking",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This datoCMS plugin enables a custom UI, to have better controll over your record, assets, urls, telephone or email links",
   "engines": {
     "node": ">=20.0.0"
