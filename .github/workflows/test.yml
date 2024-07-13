@@ -1,59 +1,38 @@
-name: Test
+name: Test and Publish Dry Run
 
 on:
     pull_request:
         types: [opened, synchronize, reopened, ready_for_review]
 
-env:
-    IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
-    DRY_RUN: true # Change this to false for actual publishing
-
 jobs:
-    push:
+    test:
         runs-on: ubuntu-latest
-        permissions:
-            packages: write
-            contents: read
-
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ secrets.NODE_VERSION }}
 
-            - name: Install dependencies
+            - name: Cache node modules
+              uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-build-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-cache-node-modules-
+                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-
+
+            - name: Install Dependencies
               run: npm ci
 
-            - name: Run tests
-              run: npm test
+            - name: Run Tests
+              run: npm run test
 
-            - name: Build image
-              run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-
-            - name: Log in to registry
-              run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            - name: Tag and (optionally) push image
-              run: |
-                  IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-
-                  # This changes all uppercase characters to lowercase.
-                  IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-                  # This strips the git ref prefix from the version.
-                  VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-                  # This strips the "v" prefix from the tag name.
-                  [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-                  # This uses the Docker `latest` tag convention.
-                  [ "$VERSION" == "main" ] && VERSION=latest
-                  echo IMAGE_ID=$IMAGE_ID
-                  echo VERSION=$VERSION
-
-                  docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-
-                  if [ "${{ env.DRY_RUN }}" = "true" ]; then
-                    echo "Dry run: skipping docker push"
-                  else
-                    docker push $IMAGE_ID:$VERSION
-                  fi
+            - name: Verify package can be published
+              run: npm publish --dry-run --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
