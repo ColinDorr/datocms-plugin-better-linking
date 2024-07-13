@@ -37,18 +37,31 @@ const FieldRecord: React.FC<Props> = ({ ctx, ctxFieldParameters, ctxPluginParame
     const [fieldSettings, setFieldSettings] = useState<FieldSettings>(savedFieldSettings);
 
     const itemTypes = ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
-
-    const updateRecordValue = (record: any) => {
+    
+    const getLocalizedData = (source: { [key: string]: any } | string, locale: string|null): any => {
+        return locale && typeof source === "object" ? source[locale] : source;
+    };
+    const joinArrayWithCommaAndAmpersand = (arr: string[]) => {
+        return arr.length > 1 ? arr.slice(0, -1).join(', ') + ' & ' + arr[arr.length - 1] : arr[0] || '';
+    }
+      
+    const updateRecordValue = async (record: any) => {
         let recordData: FieldSettings = { ...resetObject };
         const id = record?.id || null;
-        const title = (locale ? record?.attributes?.title?.[locale] : record?.attributes?.title) || record?.attributes?.title || null;
+        const slug = getLocalizedData(record?.attributes?.slug, locale) || getLocalizedData(record?.attributes?.uri, locale) || getLocalizedData(record?.attributes?.url, locale) || null;
+        const title = getLocalizedData(record?.attributes?.title, locale) || slug || null;
         const cms_url = ctx?.site?.attributes?.internal_domain && record?.relationships?.item_type?.data?.id && record?.id ? `https://${ctx.site.attributes.internal_domain}/editor/item_types/${record.relationships.item_type.data.id}/items/${record.id}/edit` : null;
-        const slug = (locale ? record?.attributes?.slug?.[locale] : record?.attributes?.slug) || record?.attributes?.slug || null;
         const status = record?.meta?.status || null;
         const url = slug;
 
         if (id && title && cms_url && slug && status && url) {
             recordData = { id, title, cms_url, slug, status, url };
+        } else if (record !== null) {
+            const errors = [];
+            if (id === null) { errors.push("`ID`") }
+            if (title === null) { errors.push("`Title`") }
+            if (slug === null) { errors.push("`Slug`") }
+            await ctx.alert(`Record ${ joinArrayWithCommaAndAmpersand(errors)} could not be found`);
         }
 
         setFieldSettings(recordData);

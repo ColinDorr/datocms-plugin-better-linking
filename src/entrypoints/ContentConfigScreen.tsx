@@ -24,13 +24,13 @@ type ContentSettings = {
     stylingType: StylingType, 
     open_in_new_window: boolean,
     custom_text: string,
+    aria_label:string,
 
     record: any, 
     asset: any, 
     url: any, 
     tel: any, 
     email: any,
-    
  };
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
@@ -49,10 +49,11 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
     const locale: string = ctx?.locale;
     const defaultLinkType = { label: "--select--", value: "", api_key: "" };
-    const stylingOptions = ctxFieldParameters?.stylingOptions || []
+    const stylingOptions = ctxFieldParameters?.stylingOptions ?? []
 
-    const allowNewTarget = ctxFieldParameters?.allow_new_target || true;
-    const allowCustomText = ctxFieldParameters?.allow_custom_text || true;
+    const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
+    const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
+    const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
 
     const defaultRecord = { "id": null,  "title": null,  "cms_url": null, "slug": null, "status": null,  "url": null };
     const defaultAsset = { "id": null,  "title": null,  "cms_url": null, "slug": null, "status": null,  "url": null };
@@ -60,11 +61,15 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     const defaultTel = { "title": null, "url": null };
     const defaultEmail = { "title": null, "url": null };
 
+    const columnLayout = allowAriaLabel || allowNewTarget ? 'col-3' : "col-2";
+
     const savedContentSettings: ContentSettings = {
         linkType: getDefaultValue(ctxParameters, "linkType", linkTypeOptions?.[0] || defaultLinkType ), 
-        stylingType: getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ), 
-        open_in_new_window: getDefaultValue(ctxParameters, "open_in_new_window", false ),
-        custom_text: getDefaultValue(ctxParameters, "custom_text", "" ),
+        stylingType: stylingOptions && stylingOptions.length > 0 ? getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ) : "", 
+        
+        open_in_new_window: allowNewTarget ? getDefaultValue(ctxParameters, "open_in_new_window", false ) : false,
+        custom_text: allowCustomText ? getDefaultValue(ctxParameters, "custom_text", "" ) : null,
+        aria_label: allowAriaLabel ? getDefaultValue(ctxParameters, "aria_label", "" ) : null,
         
         record: getDefaultValue(ctxParameters, "record", defaultRecord ), 
         asset: getDefaultValue(ctxParameters, "asset", defaultAsset ), 
@@ -72,6 +77,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         tel: getDefaultValue(ctxParameters, "tel", defaultTel ), 
         email: getDefaultValue(ctxParameters, "email", defaultEmail ),  
     };
+    
     const [contentSettings, setContentSettings] = useState<ContentSettings>(savedContentSettings);
 
     const updateContentSettings = async ( valueObject: object ) => {
@@ -99,6 +105,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
             isValid: false,
             type: selectedType,
             text: getText(data, selectedType),
+            ariaLabel: data.aria_label ?? getText(data, selectedType),
             url: data?.[selectedType]?.url || null,
             target: data?.open_in_new_window ? '_blank' : '_self',
             class: data?.stylingType?.value || null,
@@ -109,7 +116,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
         const newSettings = {
             ...data, 
             isValid: formatted.isValid,
-            formatted : formatted.isValid ? formatted : null
+            formatted : formatted
         }
 
         setContentSettings(newSettings);
@@ -120,7 +127,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
     return (
         <Canvas ctx={ctx}>
             {contentSettings.linkType?.value ? (
-                <Form className={ styles["link-field"] }>
+                <Form className={[styles["link-field"], styles[`link-field--${columnLayout}`]].join(' ')}>
                     <FieldGroup className={ styles["link-filed__type-styling"] }>
                         <SelectField
                             name="type"
@@ -187,7 +194,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                             />
                         ) : null }
 
-
                         { allowCustomText && (
                             <TextField
                                 name="custom_text"
@@ -201,21 +207,38 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
                             />
                         )}
                     </FieldGroup>
-                    { allowNewTarget && (
+
+                    { (allowNewTarget || allowAriaLabel) && (
                         <FieldGroup className={ styles["link-field__target-column"] }>
-                            <p className={ styles["link-field__target-label"] }>Window</p>
-                            <SwitchField
-                                name="open_in_new_window"
-                                id="open_in_new_window"
-                                label="Open in new window"
-                                value={ contentSettings.open_in_new_window }
-                                onChange={(newValue) => {
-                                    contentSettings.open_in_new_window = newValue
-                                    updateContentSettings({"open_in_new_window": newValue})
-                                }}
-                            />
+                            { allowNewTarget && (
+                                <div className={styles["link-field__target-container"]}>
+                                    <p className={ styles["link-field__target-label"] }>Window (Optional)</p>
+                                    <SwitchField
+                                        name="open_in_new_window"
+                                        id="open_in_new_window"
+                                        label="Open in new window"
+                                        value={ contentSettings.open_in_new_window }
+                                        onChange={(newValue) => {
+                                            contentSettings.open_in_new_window = newValue
+                                            updateContentSettings({"open_in_new_window": newValue})
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            { allowAriaLabel && (
+                                <TextField
+                                    name="aria_label"
+                                    id="aria_label"
+                                    label="Aria-label (Optional)"
+                                    value={ contentSettings.aria_label }
+                                    textInputProps={{ monospaced: true }}
+                                    onChange={(newValue) => {
+                                        updateContentSettings({"aria_label": newValue})
+                                    }}
+                                />
+                            )}
                         </FieldGroup>
-                    )} 
+                    )}
                 </Form>
             ) : (
                 <div>

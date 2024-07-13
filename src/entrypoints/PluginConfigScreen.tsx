@@ -16,7 +16,14 @@ export default function PluginConfigScreen({ ctx }: Props) {
         <Canvas ctx={ctx}>
             <div className="content">
                 <p>Welcome to the "Better Linking" plugin!</p>
-                <p>This DatoCMS plugin allows you to easily create a complex link field, containing different link types (records, assets, URLs, email links, or telephone numbers), custom styling, control over the link target, and the ability to override the link text with a custom value.</p>
+                <p>This DatoCMS plugin allows you to easily create a complex link field, containing:</p>
+                <ul>
+                    <li>Different link types (records, assets, URLs, email links, or telephone numbers)</li>
+                    <li>Custom styling/link classes</li>
+                    <li>Custom link text overrides</li>
+                    <li>Aria-label text overrides</li>
+                    <li>Target window controls</li>
+                </ul>
             </div>
 
             <div>
