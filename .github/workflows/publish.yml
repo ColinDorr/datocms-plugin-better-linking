@@ -1,36 +1,44 @@
 name: Publish Package
 
 on:
-    push:
-        tags:
-            - "v**"
+  push:
+    tags:
+      - v**
 
+  pull_request:
+
+env:
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+#
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        permissions:
-            id-token: write
-        steps:
-            - uses: actions/checkout@v3
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      #
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: ${{ secrets.NODE_VERSION }}
-                  registry-url: "https://registry.npmjs.org"
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
 
-            - name: Use dependencies cache
-              uses: actions/cache@v3
-              with:
-                  path: ~/.npm
-                  key: npm-${{ hashFiles('package-lock.json') }}
-                  restore-keys: npm-
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        #
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
 
-            - name: Install dependencies
-              run: npm ci --ignore-scripts --no-audit --no-fund
-
-            - name: Publish package
-              run: npm publish --provenance
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+          # This changes all uppercase characters to lowercase.
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # This strips the git ref prefix from the version.
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # This strips the "v" prefix from the tag name.
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # This uses the Docker `latest` tag convention.
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
