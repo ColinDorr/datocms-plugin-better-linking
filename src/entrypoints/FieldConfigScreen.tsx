@@ -4,7 +4,7 @@ import { RenderManualFieldExtensionConfigScreenCtx } from "datocms-plugin-sdk";
 import Helpers from "./../utils/helpers";
 
 import LinkSettings from "./../components/controlls/LinkSettings";
-import StylingSettings from "./../components/controlls/StylingSettings";
+import StylingSettings from "../components/controlls/StylingSettings";
 
 type PropTypes = {
 	ctx: RenderManualFieldExtensionConfigScreenCtx;
