@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Canvas, Section } from "datocms-react-ui";
 
-import LinkSettings from "../components/controlls/LinkSettings";
-import StylingSettings from "../components/controlls/StylingSettings";
+import LinkSettings from "./../components/controlls/LinkSettings";
+import StylingSettings from "./../components/controlls/StylingSettings";
 
 type Props = {
 	ctx: any;
