@@ -45,7 +45,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
     };
 
     const itemTypes: LinkType[] = Object.values(ctx?.itemTypes)
-        .filter((type: any) => type.attributes.tree || type.attributes.singleton)
+        .filter((type: any) => !type.attributes.modular_block)
         .map((value: any) => ({
             label: value.attributes.name,
             api_key: value.attributes.api_key,
