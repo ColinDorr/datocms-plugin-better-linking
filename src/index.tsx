@@ -37,8 +37,7 @@ connect({
   },
 
   // Add field editor "Linkit" to link field appearences
-  overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
-    console.log(field.attributes.field_type)
+  overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {   
     if (
       (field.attributes.field_type === "json" )
       && field.attributes.appearance?.field_extension === fieldSettings.id

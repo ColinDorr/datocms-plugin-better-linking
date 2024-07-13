@@ -31,12 +31,19 @@ const FieldAsset: React.FC<Props> = ({ ctx, savedFieldSettings, locale, onValueU
     const [fieldSettings, setFieldSettings] = useState<FieldSettings>(savedFieldSettings);
 
     // Manipulate Assets
-    const updateAssetValue = (asset: any) => {
+    const updateAssetValue = async (asset: any) => {
+        const getLocalizedData = (source: { [key: string]: any } | string, locale: string|null): any => {
+            return locale && typeof source === "object" ? source[locale] : source;
+        };
+        const joinArrayWithCommaAndAmpersand = (arr: string[]) => {
+            return arr.length > 1 ? arr.slice(0, -1).join(', ') + ' & ' + arr[arr.length - 1] : arr[0] || '';
+        }
+
         let assetData: FieldSettings = { ...resetObject };
         const id = asset?.id || null;
-        const title = (locale ? asset?.attributes?.default_field_metadata?.[locale]?.title : asset?.attributes?.default_field_metadata?.title ) || asset?.attributes?.filename || null;
-        const altText = (locale ? asset?.attributes?.default_field_metadata?.[locale]?.alt : asset?.attributes?.default_field_metadata?.alt ) || null;
         const filename =  asset?.attributes?.filename || null;
+        const title = getLocalizedData(asset?.attributes?.default_field_metadata, locale)?.title || filename;
+        const altText = getLocalizedData(asset?.attributes?.default_field_metadata, locale)?.alt || title;
         const cms_url = asset?.attributes?.url || (ctx?.site?.attributes?.internal_domain && asset?.id ? `https://${ctx.site.attributes.internal_domain}/media/assets/${asset.id}` : null);
         const url = asset?.attributes?.url || null;
         const status = "published";
@@ -50,6 +57,12 @@ const FieldAsset: React.FC<Props> = ({ ctx, savedFieldSettings, locale, onValueU
                 status, 
                 url 
             };
+        } else if (asset !== null) {
+            const errors = [];
+            if (id === null) { errors.push("`ID`") }
+            if (title === null) { errors.push("`Title`") }
+            if (url === null) { errors.push("`URL`") }
+            await ctx.alert(`Asset ${ joinArrayWithCommaAndAmpersand(errors)} could not be found`);
         }
         
         setFieldSettings(assetData);

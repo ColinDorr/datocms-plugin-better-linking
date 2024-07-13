@@ -1,13 +1,19 @@
 .link-field {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-areas: "col1 col1 col2 col2 col2 col2 col2 col2 col3 col3";
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-m);
     column-gap: var(--spacing-l);
     padding: var(--spacing-l);
     border-radius: 8px;
     background: #f5f5f5;
 }
+.link-field--col-2{
+    grid-template-areas: "col1 col2 col2";
+}
+.link-field--col-3{
+    grid-template-areas: "col1 col2 col3";
+}
+
 .link-field > * {
     width: 100%;
     margin: 0;
@@ -35,13 +41,15 @@
     margin: 0;
 }
 
-.link-field__target-label {
-    margin: 0;
-    color: var(--light-body-color);
-    font-size: var(--font-size-m);
-}
-
 .link-field__error {
     color: var(--remove-color);
     font-size: var(--font-size-l);
+}
+.link-field__target-label {
+    margin: 0 0 6px;
+    color: var(--light-body-color);
+    font-size: var(--font-size-m);
+}
+.link-field__target-label + * {
+    height: 38px;
 }

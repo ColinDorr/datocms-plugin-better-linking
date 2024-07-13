@@ -32,6 +32,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
         { id: "allow_tel", label: "Allow Telephone numbers", value: getDefaultValue(ctxParameters, "allow_tel", true) },
         { id: "allow_email", label: "Allow Email addresses", value: getDefaultValue(ctxParameters, "allow_email", true) },
         { id: "allow_custom_text", label: "Allow Custom text", value: getDefaultValue(ctxParameters, "allow_custom_text", true) },
+        { id: "allow_aria_label", label: "Allow aria-label", value: getDefaultValue(ctxParameters, "allow_aria_label", true) },
         { id: "allow_new_target", label: "Allow Target control", value: getDefaultValue(ctxParameters, "allow_new_target", true) },
         { id: "itemTypes", label: "Item Types", value: getDefaultValue(ctxParameters, "itemTypes", []) },
     ];
@@ -44,18 +45,28 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
         allow_email: { label: "Email address", value: "email" },
     };
 
+    const removeNonAlphabeticalCharactersFromString = (input: string): string => {
+        const pattern = /[^a-zA-Z\s-]/g;
+        const filteredString = input.replace(pattern, '');
+        return filteredString;
+    }
+
     const itemTypes: LinkType[] = Object.values(ctx?.itemTypes)
         .filter((type: any) => !type.attributes.modular_block)
         .map((value: any) => ({
+            ...value,
             label: value.attributes.name,
             api_key: value.attributes.api_key,
-            value: value.id
+            value: value.id,
         }))
         .sort((a, b) => {
-            if (a.label < b.label) { return -1; }
-            if (a.label > b.label) { return 1; }
+            const labelA = removeNonAlphabeticalCharactersFromString(a.label);
+            const labelB = removeNonAlphabeticalCharactersFromString(b.label);
+            if (labelA < labelB) { return -1; }
+            if (labelA > labelB) { return 1; }
             return 0;
-        });
+        }
+    );
 
     const [configSettings, setConfigSettings] = useState<ConfigSetting[]>(savedLinkFieldSettings);
 
@@ -118,7 +129,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                 />
 
                 <FieldGroup className={ styles["link-settings__link-types"] }>
-                    {configSettings.slice(0, -3).map((param: ConfigSetting) => (
+                    {configSettings.slice(0, -4).map((param: ConfigSetting) => (
                         <div key={param.id} className={ styles["link-settings__link-type-item"] }>
                             <SwitchField
                                 id={param.id}
@@ -139,7 +150,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
                     ))}
                 </FieldGroup>
                 <FieldGroup className={ styles["link-settings__link-controlls"] }>
-                    {configSettings.slice(-3, -1).map((param: ConfigSetting) => (
+                    {configSettings.slice(-4, -1).map((param: ConfigSetting) => (
                         <div key={param.id} className={ styles["link-settings__link-control-item"] }>
                             <SwitchField
                                 id={param.id}
