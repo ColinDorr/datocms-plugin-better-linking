@@ -2,7 +2,13 @@
 
 # DatoCMS plugin: Better Linking
 Welcome to the `Better Linking` plugin!
-This DatoCMS plugin allows you to easily create a complex link field, containing different link types (records, assets, URLs, email links, or telephone numbers), custom styling, control over the link target, and the ability to override the link text with a custom value.
+This DatoCMS plugin allows you to easily create a complex link field, containing:
+- Different link types (records, assets, URLs, email links, or telephone numbers)
+- Custom styling/link classes
+- Custom link text overrides
+- Aria-label text overrides
+- Target window controls
+
 
 ![](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/cover.png)
 
@@ -29,4 +35,4 @@ When using the plugin, a JSON data object will be generated with all the setting
 When querying the data of a `Better Linking` field, the whole JSON data object will be returned, containing all the data and selected options, allowing developers full access to the detailed information of the link.
 This might look a bit intimidating at first glance, but don't be scared. In the JSON data object, you will also find an object called `formatted`. This object contains a minimized representation of all link data. In most cases, this data will be more than enough to handle your links.
 
-![formatted response](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/formatted-response.png)
+![formatted response](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/graphql-response.png)
