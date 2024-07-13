@@ -10,7 +10,7 @@
 	"scripts": {
 		"start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
 		"build": "cross-env PUBLIC_URL='.' react-scripts build",
-		"test": "jest",
+		"test": "jest --passWithNoTests",
 		"test:watch": "jest --watch",
 		"prettier": "prettier --write .",
 		"pre-commit": "npm run prettier",
