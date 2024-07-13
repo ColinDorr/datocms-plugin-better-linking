@@ -7,15 +7,15 @@ import {
 	SwitchField,
 	TextField,
 } from "datocms-react-ui";
-import Helpers from "../utils/helpers";
+import Helpers from "./../utils/helpers";
 
-import FieldAsset from "../components/fields/FieldAsset";
-import FieldRecord from "../components/fields/FieldRecord";
-import FieldTel from "../components/fields/FieldTel";
-import FieldEmail from "../components/fields/FieldEmail";
-import FieldUrl from "../components/fields/FieldUrl";
+import FieldAsset from "./../components/fields/FieldAsset";
+import FieldRecord from "./../components/fields/FieldRecord";
+import FieldTel from "./../components/fields/FieldTel";
+import FieldEmail from "./../components/fields/FieldEmail";
+import FieldUrl from "./../components/fields/FieldUrl";
 
-import styles from "../styles/styles.ContentConfigScreen.module.css";
+import styles from "./../styles/styles.ContentConfigScreen.module.css";
 
 const { getCtxParams, getDefaultValue } = Helpers();
 

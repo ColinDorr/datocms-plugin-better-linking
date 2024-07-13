@@ -6,7 +6,7 @@ import {
 	SwitchField,
 	Button,
 } from "datocms-react-ui";
-import Helpers from "../../utils/helpers";
+import Helpers from "./../../utils/helpers";
 import styles from "./../../styles/styles.LinkSettings.module.css";
 
 const { getCtxParams, getDefaultValue } = Helpers();
