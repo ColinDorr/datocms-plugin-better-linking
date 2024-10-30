@@ -35,10 +35,15 @@
     flex-direction: column;
     gap: var(--spacing-m);
 }
+
 .link-filed__type-styling > *,
 .link-field__link-text > *,
 .link-field__target-column > * {
     margin: 0;
+}
+
+.link-field__target-column > * {
+    margin-bottom: 4px;
 }
 
 .link-field__error {

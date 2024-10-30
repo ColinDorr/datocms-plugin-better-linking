@@ -74,9 +74,7 @@
 		"previewImage": "docs/preview.png",
 		"coverImage": "docs/cover.png",
 		"entryPoint": "build/index.html",
-		"permissions": [
-			"currentUserAccessToken"
-		]
+		"permissions": []
 	},
 	"eslintConfig": {
 		"extends": [

@@ -23,154 +23,210 @@ type PropTypes = {
 	ctx: any;
 };
 
-type LinkType = { label: string; api_key?: string; value: string };
-type StylingType = { label: string; value: string };
+type LinkTypeSting = "record" | "asset" | "url" | "tel" | "email" | "";
+type LinkTypeData = { label:  string, value:  LinkTypeSting }
+type StylingTypeData = {label: string, value: string }
+type RecordData = {
+	cms_url: string,
+	id: string,
+	slug: string,
+	status: string,
+	title: string,
+	url: string,
+	modelDate?: { 
+		id: string, 
+		api_key: string, 
+		label: string, 
+		type: string
+	} | null,
+	modelApiKey?: string | null,
+}
 
-type ContentSettings = {
-	linkType: LinkType;
-	stylingType: StylingType;
-	open_in_new_window: boolean;
-	custom_text: string;
-	aria_label: string;
+type AssetData = {
+	alt: string | null,
+	cms_url: string | null,
+	id: string | null,
+	status: string | null,
+	title: string | null,
+	url: string | null
+}
 
-	record: any;
-	asset: any;
-	url: any;
-	tel: any;
-	email: any;
-};
+type UrlData = {
+	title: string,
+	url: string,
+}
+type TelData = {
+	title: string,
+	url: string,
+}
+type MailData = {
+	title: string,
+	url: string,
+}
+
+type StoredDate = {
+	linkType: LinkTypeData,
+	stylingType: StylingTypeData,
+	record: RecordData,
+	asset: AssetData,
+	url: UrlData,
+	tel: TelData,
+	email: MailData,
+	custom_text: string | number | readonly string[] | undefined,
+	aria_label: string | number | readonly string[] | undefined, 
+	open_in_new_window: boolean,
+	formatted: any,
+	isValid: boolean
+}
+
+let storedDate = {
+	linkType: {},
+	stylingType: {},
+	record: {},
+	asset: {},
+	url: {},
+	tel: {},
+	email: {},
+	formatted: {},
+	custom_text: undefined,
+	aria_label: undefined,
+	open_in_new_window: false,
+	isValid: false,
+} as StoredDate;
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
 	// Retrieve parameters from context
+	const locale: string = ctx?.locale;
 	const ctxFieldParameters: any = getCtxParams(ctx, "field_settings");
 	const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 	const ctxParameters: any = getCtxParams(ctx, "content_settings");
 
 	// List field settings data
-	const itemTypes =
-		ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
-	let linkTypeOptions: LinkType[] = ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
+	const itemTypes = ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
+	let linkTypeOptions: LinkTypeData[] = ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
 
 	if (itemTypes.length === 0) {
 		linkTypeOptions = linkTypeOptions.filter((e) => e.value !== "record");
 	}
 
-	const locale: string = ctx?.locale;
-	const defaultLinkType = { label: "--select--", value: "", api_key: "" };
+	// Set default values
+	const defaultLinkType = { label: "--select--", value: "" } as LinkTypeData;
 	const stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
-
 	const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
-
-	const defaultRecord = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
-	};
-	const defaultAsset = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
-	};
+	const defaultRecord = { id: null, title: null, cms_url: null, slug: null, status: null, url: null};
+	const defaultAsset = { id: null, title: null, cms_url: null, slug: null, status: null, url: null };
 	const defaultUrl = { title: null, url: null };
 	const defaultTel = { title: null, url: null };
 	const defaultEmail = { title: null, url: null };
 
+	// Set layout
 	const columnLayout = allowAriaLabel || allowNewTarget ? "col-3" : "col-2";
 
-	const savedContentSettings: ContentSettings = {
-		linkType: getDefaultValue(
-			ctxParameters,
-			"linkType",
-			linkTypeOptions?.[0] || defaultLinkType,
-		),
-		stylingType:
-			stylingOptions && stylingOptions.length > 0
-				? getDefaultValue(
-						ctxParameters,
-						"stylingType",
-						stylingOptions?.[0] || "",
-					)
-				: "",
+	const getRecordModel = (source:any) => {
+		const url = source?.cms_url || "";
+		const match = url.match(/item_types\/(\d+)/);
+		const recordItemType = match ? match[1] : null;
 
-		open_in_new_window: allowNewTarget
-			? getDefaultValue(ctxParameters, "open_in_new_window", false)
-			: false,
-		custom_text: allowCustomText
-			? getDefaultValue(ctxParameters, "custom_text", "")
-			: null,
-		aria_label: allowAriaLabel
-			? getDefaultValue(ctxParameters, "aria_label", "")
-			: null,
+		if(!recordItemType){
+			return null
+		}
 
-		record: getDefaultValue(ctxParameters, "record", defaultRecord),
+		return itemTypes.filter( (itemType:any) => itemType.id === recordItemType)[0] ?? null
+	}
+
+	const getRecordModelDetails = (sourceRecord:any) => {
+		if(!sourceRecord?.cms_url){ return null }
+		const recordModel = getRecordModel(sourceRecord);
+		return { 
+			...sourceRecord,
+			modelDate: recordModel?.api_key ? {
+				id: recordModel?.id,
+				api_key: recordModel?.api_key,
+				label: recordModel?.label,
+				type: recordModel?.type,
+			} : null,
+			modelApiKey: recordModel?.api_key ? recordModel.api_key : null,
+		};
+	}
+
+	const getText = (
+		data: any, 
+		selectedType: string
+	) => {
+		switch (selectedType) {
+			case "tel":
+				return (
+					data?.custom_text ||
+					(data?.[selectedType]?.url
+						? data?.[selectedType]?.url.replace("tel:", "")
+						: null) ||
+					null
+				);
+			case "email":
+				return (
+					data?.custom_text ||
+					(data?.[selectedType]?.url
+						? data?.[selectedType]?.url.replace("mailto:", "")
+						: null) ||
+					null
+				);
+			case "url":
+				return (
+					data?.custom_text || data?.[selectedType]?.url || null
+				);
+			default:
+				return (
+					data?.custom_text || data?.[selectedType]?.title || null
+				);
+		}
+	};
+	
+
+	// Store field settings
+	const savedContentSettings: StoredDate = {
+		linkType: getDefaultValue(ctxParameters, "linkType", linkTypeOptions?.[0] || defaultLinkType ),
+		stylingType: stylingOptions && stylingOptions.length > 0 ? getDefaultValue(ctxParameters, "stylingType", stylingOptions?.[0] || "" ): "",
+		record: getRecordModelDetails( getDefaultValue(ctxParameters, "record", defaultRecord) ),
 		asset: getDefaultValue(ctxParameters, "asset", defaultAsset),
 		url: getDefaultValue(ctxParameters, "url", defaultUrl),
 		tel: getDefaultValue(ctxParameters, "tel", defaultTel),
 		email: getDefaultValue(ctxParameters, "email", defaultEmail),
+		formatted: getDefaultValue(ctxParameters, "formatted", {}),
+		custom_text: allowCustomText ? getDefaultValue(ctxParameters, "custom_text", undefined) : undefined,
+		aria_label: allowAriaLabel ? getDefaultValue(ctxParameters, "aria_label", undefined) : undefined,
+		open_in_new_window: allowNewTarget ? getDefaultValue(ctxParameters, "open_in_new_window", false) : false,
+		isValid: getDefaultValue(ctxParameters, "isValid", false)
 	};
+	const [contentSettings, setContentSettings] = useState<StoredDate>(savedContentSettings);
 
-	const [contentSettings, setContentSettings] =
-		useState<ContentSettings>(savedContentSettings);
-
-	const updateContentSettings = async (valueObject: object) => {
-		const data = {
-			...contentSettings,
-			...valueObject,
-		} as any;
-
-		const selectedType: string = data.linkType.value;
-
-		const getText = (data: any, selectedType: string) => {
-			switch (selectedType) {
-				case "tel":
-					return (
-						data?.custom_text ||
-						(data?.[selectedType]?.url
-							? data?.[selectedType]?.url.replace("tel:", "")
-							: null) ||
-						null
-					);
-				case "email":
-					return (
-						data?.custom_text ||
-						(data?.[selectedType]?.url
-							? data?.[selectedType]?.url.replace("mailto:", "")
-							: null) ||
-						null
-					);
-				case "url":
-					return (
-						data?.custom_text || data?.[selectedType]?.url || null
-					);
-				default:
-					return (
-						data?.custom_text || data?.[selectedType]?.title || null
-					);
+	// Update field setting on change
+	const updateContentSettings = async (valueObject: any) => {
+		storedDate = { ...storedDate, ...contentSettings, ...valueObject,};
+		if (storedDate?.record) {
+			const record = getRecordModelDetails(storedDate.record);
+			if(record){
+				storedDate.record = { ...record };
 			}
-		};
+		}
 
+		const selectedType: LinkTypeSting  = storedDate.linkType.value;
 		const formatted = {
 			isValid: false,
 			type: selectedType,
-			text: getText(data, selectedType),
-			ariaLabel: data.aria_label ?? getText(data, selectedType),
-			url: data?.[selectedType]?.url || null,
-			target: data?.open_in_new_window ? "_blank" : "_self",
-			class: data?.stylingType?.value || null,
+			modelApiKey: storedDate?.record?.modelApiKey ?? null,
+			text: getText(storedDate, selectedType),
+			ariaLabel: storedDate.aria_label ?? getText(storedDate, selectedType),
+			url: selectedType !== "" ? (storedDate?.[selectedType]?.url || null) : null,
+			target: storedDate?.open_in_new_window ? "_blank" : "_self",
+			class: storedDate?.stylingType?.value || null,
 		};
 
 		formatted.isValid = formatted.text && formatted.url ? true : false;
 
 		const newSettings = {
-			...data,
+			...storedDate,
 			isValid: formatted.isValid,
 			formatted: formatted,
 		};
@@ -196,7 +252,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 							label="Type"
 							value={contentSettings.linkType}
 							selectInputProps={{
-								options: linkTypeOptions as LinkType[],
+								options: linkTypeOptions as LinkTypeData[],
 							}}
 							onChange={(newValue) => {
 								updateContentSettings({ linkType: newValue });
@@ -209,7 +265,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								label="Styling"
 								value={contentSettings.stylingType}
 								selectInputProps={{
-									options: stylingOptions as StylingType[],
+									options: stylingOptions as StylingTypeData[],
 								}}
 								onChange={(newValue) => {
 									updateContentSettings({
