@@ -5,21 +5,21 @@ import styles from "./../../styles/styles.FieldRecordAsset.module.css";
 type LinkType = { label: string; api_key?: string; value: string };
 
 type FieldSettings = {
-	id: string | null;
-	title: string | null;
-	slug: string | null;
-	url?: string | null;
-	cms_url: string | null;
-	status: string | null;
+	id: string | undefined;
+	title: string | undefined;
+	slug: string | undefined;
+	url?: string | undefined;
+	cms_url: string | undefined;
+	status: string | undefined;
 };
 
 const resetObject: FieldSettings = {
-	id: null,
-	title: null,
-	slug: null,
-	url: null,
-	cms_url: null,
-	status: null,
+	id: undefined,
+	title: undefined,
+	slug: undefined,
+	url: undefined,
+	cms_url: undefined,
+	status: undefined,
 };
 
 type Props = {

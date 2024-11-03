@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
 	connect,
+	OnBootCtx,
 	Field,
 	IntentCtx,
 	FieldIntentCtx,
@@ -21,6 +22,18 @@ const fieldSettings = {
 };
 
 connect({
+	async onBoot(ctx: OnBootCtx) {
+		const { version } = require("../package.json");
+
+		if (ctx.plugin.attributes.parameters?.version === version) {
+			return;
+		}
+
+		ctx.plugin.attributes.parameters = {
+			...ctx.plugin.attributes.parameters,
+			version: version,
+		};
+	},
 	renderConfigScreen(ctx) {
 		return render(<PluginConfigScreen ctx={ctx} />);
 	},
