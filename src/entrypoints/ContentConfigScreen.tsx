@@ -27,44 +27,44 @@ type LinkTypeSting = "record" | "asset" | "url" | "tel" | "email" | "";
 type LinkTypeData = { label: string; value: LinkTypeSting };
 type StylingTypeData = { label: string; value: string };
 type RecordData = {
-	cms_url: string;
-	id: string;
-	slug: string;
-	status: string;
-	title: string;
-	url: string;
-	modelDate?: {
+	cms_url: string | undefined;
+	id: string | undefined;
+	slug: string | undefined;
+	status: string | undefined;
+	title: string | undefined;
+	url: string | undefined;
+	modelApiKey?: string | undefined;
+	modelData?: {
 		id: string;
 		api_key: string;
 		label: string;
 		type: string;
-	} | null;
-	modelApiKey?: string | null;
+	} | undefined;
 };
 
 type AssetData = {
-	alt: string | null;
-	cms_url: string | null;
-	id: string | null;
-	status: string | null;
-	title: string | null;
-	url: string | null;
+	alt: string | undefined;
+	cms_url: string | undefined;
+	id: string | undefined;
+	status: string | undefined;
+	title: string | undefined;
+	url: string | undefined;
 };
 
 type UrlData = {
-	title: string;
-	url: string;
+	title: string | undefined;
+	url: string | undefined;
 };
 type TelData = {
-	title: string;
-	url: string;
+	title: string | undefined;
+	url: string | undefined;
 };
 type MailData = {
-	title: string;
-	url: string;
+	title: string | undefined;
+	url: string | undefined;
 };
 
-type StoredDate = {
+type StoredData = {
 	linkType: LinkTypeData;
 	stylingType: StylingTypeData;
 	record: RecordData;
@@ -77,9 +77,10 @@ type StoredDate = {
 	open_in_new_window: boolean;
 	formatted: any;
 	isValid: boolean;
+	plugin_version: string
 };
 
-let storedDate = {
+let storedData = {
 	linkType: {},
 	stylingType: {},
 	record: {},
@@ -92,7 +93,7 @@ let storedDate = {
 	aria_label: undefined,
 	open_in_new_window: false,
 	isValid: false,
-} as StoredDate;
+} as StoredData;
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
 	// Retrieve parameters from context
@@ -113,29 +114,15 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
 	// Set default values
 	const defaultLinkType = { label: "--select--", value: "" } as LinkTypeData;
-	const stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
+	let stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
 	const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
-	const defaultRecord = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
-	};
-	const defaultAsset = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
-	};
-	const defaultUrl = { title: null, url: null };
-	const defaultTel = { title: null, url: null };
-	const defaultEmail = { title: null, url: null };
+	const defaultRecord = { cms_url: undefined, id: undefined, slug: undefined, status: undefined, title: undefined, url: undefined, modelApiKey: undefined, modelData: undefined, };
+	const defaultAsset = { alt: undefined, cms_url: undefined, id: undefined, status: undefined, title: undefined, url: undefined };
+	const defaultUrl = { title: undefined, url: undefined };
+	const defaultTel = { title: undefined, url: undefined };
+	const defaultEmail = { title: undefined, url: undefined };
 
 	// Set layout
 	const columnLayout = allowAriaLabel || allowNewTarget ? "col-3" : "col-2";
@@ -163,15 +150,15 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		const recordModel = getRecordModel(sourceRecord);
 		return {
 			...sourceRecord,
-			modelDate: recordModel?.api_key
+			modelApiKey: recordModel?.api_key ? recordModel.api_key : undefined,
+			modelData: recordModel?.api_key
 				? {
 						id: recordModel?.id,
 						api_key: recordModel?.api_key,
 						label: recordModel?.label,
 						type: recordModel?.type,
 					}
-				: null,
-			modelApiKey: recordModel?.api_key ? recordModel.api_key : null,
+				: undefined,
 		};
 	};
 
@@ -182,26 +169,26 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 					data?.custom_text ||
 					(data?.[selectedType]?.url
 						? data?.[selectedType]?.url.replace("tel:", "")
-						: null) ||
-					null
+						: undefined) ||
+					undefined
 				);
 			case "email":
 				return (
 					data?.custom_text ||
 					(data?.[selectedType]?.url
 						? data?.[selectedType]?.url.replace("mailto:", "")
-						: null) ||
-					null
+						: undefined) ||
+					undefined
 				);
 			case "url":
-				return data?.custom_text || data?.[selectedType]?.url || null;
+				return data?.custom_text || data?.[selectedType]?.url || undefined;
 			default:
-				return data?.custom_text || data?.[selectedType]?.title || null;
+				return data?.custom_text || data?.[selectedType]?.title || undefined;
 		}
 	};
 
 	// Store field settings
-	const savedContentSettings: StoredDate = {
+	const savedContentSettings: StoredData = {
 		linkType: getDefaultValue(
 			ctxParameters,
 			"linkType",
@@ -209,12 +196,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		),
 		stylingType:
 			stylingOptions && stylingOptions.length > 0
-				? getDefaultValue(
-						ctxParameters,
-						"stylingType",
-						stylingOptions?.[0] || "",
-					)
-				: "",
+				? getDefaultValue(ctxParameters,"stylingType", stylingOptions?.[0] || undefined,)
+				:undefined,
 		record: getRecordModelDetails(
 			getDefaultValue(ctxParameters, "record", defaultRecord),
 		),
@@ -233,40 +216,52 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			? getDefaultValue(ctxParameters, "open_in_new_window", false)
 			: false,
 		isValid: getDefaultValue(ctxParameters, "isValid", false),
+		plugin_version: getDefaultValue(ctxPluginParameters, "version", undefined),
 	};
 	const [contentSettings, setContentSettings] =
-		useState<StoredDate>(savedContentSettings);
+		useState<StoredData>(savedContentSettings);
 
 	// Update field setting on change
 	const updateContentSettings = async (valueObject: any) => {
-		storedDate = { ...storedDate, ...contentSettings, ...valueObject };
-		if (storedDate?.record) {
-			const record = getRecordModelDetails(storedDate.record);
+		storedData = { ...storedData, ...contentSettings, ...valueObject };
+		if (storedData?.record) {
+			const record = getRecordModelDetails(storedData.record);
 			if (record) {
-				storedDate.record = { ...record };
+				storedData.record = { ...record };
 			}
 		}
 
-		const selectedType: LinkTypeSting = storedDate.linkType.value;
+		const selectedType: LinkTypeSting = storedData.linkType.value;
+
+		storedData = {
+			...storedData,
+			record: selectedType === "record" ? storedData.record : defaultRecord,
+			asset: selectedType === "asset" ? storedData.asset : defaultAsset,
+			url: selectedType === "url" ? storedData.url : defaultUrl,
+			tel: selectedType === "tel" ? storedData.tel : defaultTel,
+			email: selectedType === "email" ? storedData.email : defaultEmail,
+		}
+
+
 		const formatted = {
 			isValid: false,
 			type: selectedType,
-			modelApiKey: storedDate?.record?.modelApiKey ?? null,
-			text: getText(storedDate, selectedType),
+			modelApiKey: storedData?.record?.modelApiKey ?? undefined,
+			text: getText(storedData, selectedType),
 			ariaLabel:
-				storedDate.aria_label ?? getText(storedDate, selectedType),
+				storedData.aria_label ?? getText(storedData, selectedType),
 			url:
 				selectedType !== ""
-					? storedDate?.[selectedType]?.url || null
+					? storedData?.[selectedType]?.url || null
 					: null,
-			target: storedDate?.open_in_new_window ? "_blank" : "_self",
-			class: storedDate?.stylingType?.value || null,
+			target: storedData?.open_in_new_window ? "_blank" : "_self",
+			class: storedData?.stylingType?.value || null,
 		};
 
 		formatted.isValid = formatted.text && formatted.url ? true : false;
 
 		const newSettings = {
-			...storedDate,
+			...storedData,
 			isValid: formatted.isValid,
 			formatted: formatted,
 		};

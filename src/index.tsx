@@ -2,9 +2,11 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
 	connect,
+	OnBootCtx,
 	Field,
 	IntentCtx,
 	FieldIntentCtx,
+	FieldAppearanceChange,
 	RenderFieldExtensionCtx,
 	RenderManualFieldExtensionConfigScreenCtx,
 } from "datocms-plugin-sdk";
@@ -16,11 +18,49 @@ import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
 import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
 
 const fieldSettings = {
-	id: "betterLinking",
-	name: "Better Linking",
+	id: "betterLinkingDev",
+	name: "Better Linking Dev",
 };
 
 connect({
+	
+	async onBoot(ctx: OnBootCtx) {
+		const { version } = require('../package.json');
+		// if(ctx.plugin.attributes.parameters?.version === version ){
+		//   return;
+		// }
+
+		console.log({
+			verson: ctx.plugin.attributes.parameters?.version,
+			ctx,
+		})
+		const fields = await ctx.loadFieldsUsingPlugin();
+	  
+		// ... and for each of them...
+		await Promise.all(
+		  fields.map(async (field) => {  
+			const { appearance } = field.attributes;
+			const changes: FieldAppearanceChange[] = [];
+
+			// find where our plugin is used...
+			appearance.addons.forEach((addon, index) => {
+			// set the fieldExtensionId to be the new one
+			changes.push({
+				operation: 'updateAddon',
+				index,
+				// newFieldExtensionId: 'myExtension',
+			});
+			});
+			await ctx.updateFieldAppearance(field.id, changes);
+		  }),
+		);
+		
+		// save in configuration the fact that we already performed the migration
+		ctx.plugin.attributes.parameters = {
+			...ctx.plugin.attributes.parameters,
+			version: "0.2.0"
+		};
+	  },
 	renderConfigScreen(ctx) {
 		return render(<PluginConfigScreen ctx={ctx} />);
 	},
