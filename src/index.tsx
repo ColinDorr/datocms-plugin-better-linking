@@ -6,7 +6,6 @@ import {
 	Field,
 	IntentCtx,
 	FieldIntentCtx,
-	FieldAppearanceChange,
 	RenderFieldExtensionCtx,
 	RenderManualFieldExtensionConfigScreenCtx,
 } from "datocms-plugin-sdk";
@@ -23,44 +22,18 @@ const fieldSettings = {
 };
 
 connect({
-	
 	async onBoot(ctx: OnBootCtx) {
 		const { version } = require('../package.json');
-		// if(ctx.plugin.attributes.parameters?.version === version ){
-		//   return;
-		// }
-
-		console.log({
-			verson: ctx.plugin.attributes.parameters?.version,
-			ctx,
-		})
-		const fields = await ctx.loadFieldsUsingPlugin();
-	  
-		// ... and for each of them...
-		await Promise.all(
-		  fields.map(async (field) => {  
-			const { appearance } = field.attributes;
-			const changes: FieldAppearanceChange[] = [];
-
-			// find where our plugin is used...
-			appearance.addons.forEach((addon, index) => {
-			// set the fieldExtensionId to be the new one
-			changes.push({
-				operation: 'updateAddon',
-				index,
-				// newFieldExtensionId: 'myExtension',
-			});
-			});
-			await ctx.updateFieldAppearance(field.id, changes);
-		  }),
-		);
 		
-		// save in configuration the fact that we already performed the migration
+		if(ctx.plugin.attributes.parameters?.version === version ){
+		  return;
+		}
+
 		ctx.plugin.attributes.parameters = {
 			...ctx.plugin.attributes.parameters,
-			version: "0.2.0"
+			version: version,
 		};
-	  },
+	},
 	renderConfigScreen(ctx) {
 		return render(<PluginConfigScreen ctx={ctx} />);
 	},

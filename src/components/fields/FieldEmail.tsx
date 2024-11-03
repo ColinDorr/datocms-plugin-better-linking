@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { TextField } from "datocms-react-ui";
 
 type FieldSettings = {
-	title: string | undefined
-	url: string | undefined
+	title: string | undefined;
+	url: string | undefined;
 };
 
 const resetObject: FieldSettings = {

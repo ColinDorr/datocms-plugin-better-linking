@@ -34,12 +34,14 @@ type RecordData = {
 	title: string | undefined;
 	url: string | undefined;
 	modelApiKey?: string | undefined;
-	modelData?: {
-		id: string;
-		api_key: string;
-		label: string;
-		type: string;
-	} | undefined;
+	modelData?:
+		| {
+				id: string;
+				api_key: string;
+				label: string;
+				type: string;
+		  }
+		| undefined;
 };
 
 type AssetData = {
@@ -77,7 +79,7 @@ type StoredData = {
 	open_in_new_window: boolean;
 	formatted: any;
 	isValid: boolean;
-	plugin_version: string
+	plugin_version: string;
 };
 
 let storedData = {
@@ -118,8 +120,24 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
-	const defaultRecord = { cms_url: undefined, id: undefined, slug: undefined, status: undefined, title: undefined, url: undefined, modelApiKey: undefined, modelData: undefined, };
-	const defaultAsset = { alt: undefined, cms_url: undefined, id: undefined, status: undefined, title: undefined, url: undefined };
+	const defaultRecord = {
+		cms_url: undefined,
+		id: undefined,
+		slug: undefined,
+		status: undefined,
+		title: undefined,
+		url: undefined,
+		modelApiKey: undefined,
+		modelData: undefined,
+	};
+	const defaultAsset = {
+		alt: undefined,
+		cms_url: undefined,
+		id: undefined,
+		status: undefined,
+		title: undefined,
+		url: undefined,
+	};
 	const defaultUrl = { title: undefined, url: undefined };
 	const defaultTel = { title: undefined, url: undefined };
 	const defaultEmail = { title: undefined, url: undefined };
@@ -181,9 +199,15 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 					undefined
 				);
 			case "url":
-				return data?.custom_text || data?.[selectedType]?.url || undefined;
+				return (
+					data?.custom_text || data?.[selectedType]?.url || undefined
+				);
 			default:
-				return data?.custom_text || data?.[selectedType]?.title || undefined;
+				return (
+					data?.custom_text ||
+					data?.[selectedType]?.title ||
+					undefined
+				);
 		}
 	};
 
@@ -196,8 +220,12 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		),
 		stylingType:
 			stylingOptions && stylingOptions.length > 0
-				? getDefaultValue(ctxParameters,"stylingType", stylingOptions?.[0] || undefined,)
-				:undefined,
+				? getDefaultValue(
+						ctxParameters,
+						"stylingType",
+						stylingOptions?.[0] || undefined,
+					)
+				: undefined,
 		record: getRecordModelDetails(
 			getDefaultValue(ctxParameters, "record", defaultRecord),
 		),
@@ -216,7 +244,11 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			? getDefaultValue(ctxParameters, "open_in_new_window", false)
 			: false,
 		isValid: getDefaultValue(ctxParameters, "isValid", false),
-		plugin_version: getDefaultValue(ctxPluginParameters, "version", undefined),
+		plugin_version: getDefaultValue(
+			ctxPluginParameters,
+			"version",
+			undefined,
+		),
 	};
 	const [contentSettings, setContentSettings] =
 		useState<StoredData>(savedContentSettings);
@@ -235,13 +267,13 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
 		storedData = {
 			...storedData,
-			record: selectedType === "record" ? storedData.record : defaultRecord,
+			record:
+				selectedType === "record" ? storedData.record : defaultRecord,
 			asset: selectedType === "asset" ? storedData.asset : defaultAsset,
 			url: selectedType === "url" ? storedData.url : defaultUrl,
 			tel: selectedType === "tel" ? storedData.tel : defaultTel,
 			email: selectedType === "email" ? storedData.email : defaultEmail,
-		}
-
+		};
 
 		const formatted = {
 			isValid: false,
