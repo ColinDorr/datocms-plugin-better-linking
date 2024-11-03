@@ -17,8 +17,8 @@ import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
 import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
 
 const fieldSettings = {
-	id: "betterLinkingDev",
-	name: "Better Linking Dev",
+	id: "betterLinking",
+	name: "Better Linking",
 };
 
 connect({
