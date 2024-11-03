@@ -23,10 +23,10 @@ const fieldSettings = {
 
 connect({
 	async onBoot(ctx: OnBootCtx) {
-		const { version } = require('../package.json');
-		
-		if(ctx.plugin.attributes.parameters?.version === version ){
-		  return;
+		const { version } = require("../package.json");
+
+		if (ctx.plugin.attributes.parameters?.version === version) {
+			return;
 		}
 
 		ctx.plugin.attributes.parameters = {
