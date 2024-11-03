@@ -3,21 +3,21 @@ import { FieldGroup, Button } from "datocms-react-ui";
 import styles from "./../../styles/styles.FieldRecordAsset.module.css";
 
 type FieldSettings = {
-	id: string | null;
-	title: string | null;
-	alt: string | null;
-	url?: string | null;
-	cms_url: string | null;
-	status: string | null;
+	id: string | undefined;
+	title: string | undefined;
+	alt: string | undefined;
+	url?: string | undefined;
+	cms_url: string | undefined;
+	status: string | undefined;
 };
 
 const resetObject: FieldSettings = {
-	id: null,
-	title: null,
-	alt: null,
-	url: null,
-	cms_url: null,
-	status: null,
+	id: undefined,
+	title: undefined,
+	alt: undefined,
+	url: undefined,
+	cms_url: undefined,
+	status: undefined,
 };
 
 type Props = {

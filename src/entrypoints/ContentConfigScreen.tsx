@@ -23,25 +23,83 @@ type PropTypes = {
 	ctx: any;
 };
 
-type LinkType = { label: string; api_key?: string; value: string };
-type StylingType = { label: string; value: string };
-
-type ContentSettings = {
-	linkType: LinkType;
-	stylingType: StylingType;
-	open_in_new_window: boolean;
-	custom_text: string;
-	aria_label: string;
-
-	record: any;
-	asset: any;
-	url: any;
-	tel: any;
-	email: any;
+type LinkTypeSting = "record" | "asset" | "url" | "tel" | "email" | "";
+type LinkTypeData = { label: string; value: LinkTypeSting };
+type StylingTypeData = { label: string; value: string };
+type RecordData = {
+	cms_url: string | undefined;
+	id: string | undefined;
+	slug: string | undefined;
+	status: string | undefined;
+	title: string | undefined;
+	url: string | undefined;
+	modelApiKey?: string | undefined;
+	modelData?:
+		| {
+				id: string;
+				api_key: string;
+				label: string;
+				type: string;
+		  }
+		| undefined;
 };
+
+type AssetData = {
+	alt: string | undefined;
+	cms_url: string | undefined;
+	id: string | undefined;
+	status: string | undefined;
+	title: string | undefined;
+	url: string | undefined;
+};
+
+type UrlData = {
+	title: string | undefined;
+	url: string | undefined;
+};
+type TelData = {
+	title: string | undefined;
+	url: string | undefined;
+};
+type MailData = {
+	title: string | undefined;
+	url: string | undefined;
+};
+
+type StoredData = {
+	linkType: LinkTypeData;
+	stylingType: StylingTypeData;
+	record: RecordData;
+	asset: AssetData;
+	url: UrlData;
+	tel: TelData;
+	email: MailData;
+	custom_text: string | number | readonly string[] | undefined;
+	aria_label: string | number | readonly string[] | undefined;
+	open_in_new_window: boolean;
+	formatted: any;
+	isValid: boolean;
+	plugin_version: string;
+};
+
+let storedData = {
+	linkType: {},
+	stylingType: {},
+	record: {},
+	asset: {},
+	url: {},
+	tel: {},
+	email: {},
+	formatted: {},
+	custom_text: undefined,
+	aria_label: undefined,
+	open_in_new_window: false,
+	isValid: false,
+} as StoredData;
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
 	// Retrieve parameters from context
+	const locale: string = ctx?.locale;
 	const ctxFieldParameters: any = getCtxParams(ctx, "field_settings");
 	const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 	const ctxParameters: any = getCtxParams(ctx, "content_settings");
@@ -49,43 +107,112 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	// List field settings data
 	const itemTypes =
 		ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
-	let linkTypeOptions: LinkType[] = ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
+	let linkTypeOptions: LinkTypeData[] =
+		ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
 
 	if (itemTypes.length === 0) {
 		linkTypeOptions = linkTypeOptions.filter((e) => e.value !== "record");
 	}
 
-	const locale: string = ctx?.locale;
-	const defaultLinkType = { label: "--select--", value: "", api_key: "" };
-	const stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
-
+	// Set default values
+	const defaultLinkType = { label: "--select--", value: "" } as LinkTypeData;
+	let stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
 	const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
-
 	const defaultRecord = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
+		cms_url: undefined,
+		id: undefined,
+		slug: undefined,
+		status: undefined,
+		title: undefined,
+		url: undefined,
+		modelApiKey: undefined,
+		modelData: undefined,
 	};
 	const defaultAsset = {
-		id: null,
-		title: null,
-		cms_url: null,
-		slug: null,
-		status: null,
-		url: null,
+		alt: undefined,
+		cms_url: undefined,
+		id: undefined,
+		status: undefined,
+		title: undefined,
+		url: undefined,
 	};
-	const defaultUrl = { title: null, url: null };
-	const defaultTel = { title: null, url: null };
-	const defaultEmail = { title: null, url: null };
+	const defaultUrl = { title: undefined, url: undefined };
+	const defaultTel = { title: undefined, url: undefined };
+	const defaultEmail = { title: undefined, url: undefined };
 
+	// Set layout
 	const columnLayout = allowAriaLabel || allowNewTarget ? "col-3" : "col-2";
 
-	const savedContentSettings: ContentSettings = {
+	const getRecordModel = (source: any) => {
+		const url = source?.cms_url || "";
+		const match = url.match(/item_types\/(\d+)/);
+		const recordItemType = match ? match[1] : null;
+
+		if (!recordItemType) {
+			return null;
+		}
+
+		return (
+			itemTypes.filter(
+				(itemType: any) => itemType.id === recordItemType,
+			)[0] ?? null
+		);
+	};
+
+	const getRecordModelDetails = (sourceRecord: any) => {
+		if (!sourceRecord?.cms_url) {
+			return null;
+		}
+		const recordModel = getRecordModel(sourceRecord);
+		return {
+			...sourceRecord,
+			modelApiKey: recordModel?.api_key ? recordModel.api_key : undefined,
+			modelData: recordModel?.api_key
+				? {
+						id: recordModel?.id,
+						api_key: recordModel?.api_key,
+						label: recordModel?.label,
+						type: recordModel?.type,
+					}
+				: undefined,
+		};
+	};
+
+	const getText = (data: any, selectedType: string) => {
+		switch (selectedType) {
+			case "tel":
+				return (
+					data?.custom_text ||
+					(data?.[selectedType]?.url
+						? data?.[selectedType]?.url.replace("tel:", "")
+						: undefined) ||
+					undefined
+				);
+			case "email":
+				return (
+					data?.custom_text ||
+					(data?.[selectedType]?.url
+						? data?.[selectedType]?.url.replace("mailto:", "")
+						: undefined) ||
+					undefined
+				);
+			case "url":
+				return (
+					data?.custom_text || data?.[selectedType]?.url || undefined
+				);
+			default:
+				return (
+					data?.custom_text ||
+					data?.[selectedType]?.title ||
+					undefined
+				);
+		}
+	};
+
+	// Store field settings
+	const savedContentSettings: StoredData = {
 		linkType: getDefaultValue(
 			ctxParameters,
 			"linkType",
@@ -96,81 +223,77 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 				? getDefaultValue(
 						ctxParameters,
 						"stylingType",
-						stylingOptions?.[0] || "",
+						stylingOptions?.[0] || undefined,
 					)
-				: "",
-
-		open_in_new_window: allowNewTarget
-			? getDefaultValue(ctxParameters, "open_in_new_window", false)
-			: false,
-		custom_text: allowCustomText
-			? getDefaultValue(ctxParameters, "custom_text", "")
-			: null,
-		aria_label: allowAriaLabel
-			? getDefaultValue(ctxParameters, "aria_label", "")
-			: null,
-
-		record: getDefaultValue(ctxParameters, "record", defaultRecord),
+				: undefined,
+		record: getRecordModelDetails(
+			getDefaultValue(ctxParameters, "record", defaultRecord),
+		),
 		asset: getDefaultValue(ctxParameters, "asset", defaultAsset),
 		url: getDefaultValue(ctxParameters, "url", defaultUrl),
 		tel: getDefaultValue(ctxParameters, "tel", defaultTel),
 		email: getDefaultValue(ctxParameters, "email", defaultEmail),
+		formatted: getDefaultValue(ctxParameters, "formatted", {}),
+		custom_text: allowCustomText
+			? getDefaultValue(ctxParameters, "custom_text", undefined)
+			: undefined,
+		aria_label: allowAriaLabel
+			? getDefaultValue(ctxParameters, "aria_label", undefined)
+			: undefined,
+		open_in_new_window: allowNewTarget
+			? getDefaultValue(ctxParameters, "open_in_new_window", false)
+			: false,
+		isValid: getDefaultValue(ctxParameters, "isValid", false),
+		plugin_version: getDefaultValue(
+			ctxPluginParameters,
+			"version",
+			undefined,
+		),
 	};
-
 	const [contentSettings, setContentSettings] =
-		useState<ContentSettings>(savedContentSettings);
+		useState<StoredData>(savedContentSettings);
 
-	const updateContentSettings = async (valueObject: object) => {
-		const data = {
-			...contentSettings,
-			...valueObject,
-		} as any;
-
-		const selectedType: string = data.linkType.value;
-
-		const getText = (data: any, selectedType: string) => {
-			switch (selectedType) {
-				case "tel":
-					return (
-						data?.custom_text ||
-						(data?.[selectedType]?.url
-							? data?.[selectedType]?.url.replace("tel:", "")
-							: null) ||
-						null
-					);
-				case "email":
-					return (
-						data?.custom_text ||
-						(data?.[selectedType]?.url
-							? data?.[selectedType]?.url.replace("mailto:", "")
-							: null) ||
-						null
-					);
-				case "url":
-					return (
-						data?.custom_text || data?.[selectedType]?.url || null
-					);
-				default:
-					return (
-						data?.custom_text || data?.[selectedType]?.title || null
-					);
+	// Update field setting on change
+	const updateContentSettings = async (valueObject: any) => {
+		storedData = { ...storedData, ...contentSettings, ...valueObject };
+		if (storedData?.record) {
+			const record = getRecordModelDetails(storedData.record);
+			if (record) {
+				storedData.record = { ...record };
 			}
+		}
+
+		const selectedType: LinkTypeSting = storedData.linkType.value;
+
+		storedData = {
+			...storedData,
+			record:
+				selectedType === "record" ? storedData.record : defaultRecord,
+			asset: selectedType === "asset" ? storedData.asset : defaultAsset,
+			url: selectedType === "url" ? storedData.url : defaultUrl,
+			tel: selectedType === "tel" ? storedData.tel : defaultTel,
+			email: selectedType === "email" ? storedData.email : defaultEmail,
 		};
 
 		const formatted = {
 			isValid: false,
 			type: selectedType,
-			text: getText(data, selectedType),
-			ariaLabel: data.aria_label ?? getText(data, selectedType),
-			url: data?.[selectedType]?.url || null,
-			target: data?.open_in_new_window ? "_blank" : "_self",
-			class: data?.stylingType?.value || null,
+			modelApiKey: storedData?.record?.modelApiKey ?? undefined,
+			text: getText(storedData, selectedType),
+			ariaLabel:
+				storedData.aria_label ?? getText(storedData, selectedType),
+			url:
+				selectedType !== ""
+					? storedData?.[selectedType]?.url || null
+					: null,
+			target: storedData?.open_in_new_window ? "_blank" : "_self",
+			class: storedData?.stylingType?.value || null,
 		};
 
 		formatted.isValid = formatted.text && formatted.url ? true : false;
 
 		const newSettings = {
-			...data,
+			...storedData,
 			isValid: formatted.isValid,
 			formatted: formatted,
 		};
@@ -196,7 +319,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 							label="Type"
 							value={contentSettings.linkType}
 							selectInputProps={{
-								options: linkTypeOptions as LinkType[],
+								options: linkTypeOptions as LinkTypeData[],
 							}}
 							onChange={(newValue) => {
 								updateContentSettings({ linkType: newValue });
@@ -209,7 +332,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								label="Styling"
 								value={contentSettings.stylingType}
 								selectInputProps={{
-									options: stylingOptions as StylingType[],
+									options:
+										stylingOptions as StylingTypeData[],
 								}}
 								onChange={(newValue) => {
 									updateContentSettings({
