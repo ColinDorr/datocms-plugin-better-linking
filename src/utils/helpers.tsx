@@ -1,13 +1,24 @@
 const Helpers = () => {
 	// Return parametes object form the current context (Ctx)
 	function getCtxParams(ctx: any, configType: string) {
-		if (
-			configType === "content_settings" &&
-			ctx?.formValues[ctx.field.attributes.api_key]
-		) {
-			const data = ctx.field.attributes.localized
-				? ctx?.formValues[ctx.field.attributes.api_key][ctx.locale]
-				: ctx?.formValues[ctx.field.attributes.api_key];
+		const isLocalizedField = ctx.field?.attributes?.localized;
+		const fieldPath = ctx.fieldPath ? ctx.fieldPath.split('.') : [];
+		const formFieldValues = fieldPath.reduce((acc:any, part:any) => acc?.[part], ctx?.formValues);
+
+		console.log({
+			ctx,
+			fieldPath,
+			formFieldValues
+			// ctx,
+			// fieldPath: ctx.fieldPath,
+			// configType,
+			// isLocalizedField,
+			// isLocalizedModel,
+			// formFieldValues
+		})
+		
+		if ( configType === "content_settings" && formFieldValues ) {
+			const data = formFieldValues;
 			return JSON.parse(data);
 		}
 		// Use when configType is field_setting or when content_settings is empty
