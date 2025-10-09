@@ -11,6 +11,7 @@ type FieldSettings = {
 	url?: string | undefined;
 	cms_url: string | undefined;
 	status: string | undefined;
+	modelApiKey?: string | undefined;
 };
 
 const resetObject: FieldSettings = {
@@ -20,6 +21,7 @@ const resetObject: FieldSettings = {
 	url: undefined,
 	cms_url: undefined,
 	status: undefined,
+	modelApiKey: undefined,
 };
 
 type Props = {
@@ -82,8 +84,27 @@ const FieldRecord: React.FC<Props> = ({
 		const status = record?.meta?.status || null;
 		const url = slug;
 
+		// Get model API key from the item type relationship
+		let modelApiKey: string | undefined = undefined;
+		if (record?.relationships?.item_type?.data?.id) {
+			const itemTypeId = record.relationships.item_type.data.id;
+
+			const matchingItemType = itemTypes.find(
+				(itemType: any) => itemType.id === itemTypeId,
+			);
+
+			// Check if we can get the API key directly from the record's item_type data
+			if (record?.relationships?.item_type?.data?.attributes?.api_key) {
+				modelApiKey = String(
+					record.relationships.item_type.data.attributes.api_key,
+				);
+			} else if (matchingItemType?.api_key) {
+				modelApiKey = String(matchingItemType.api_key);
+			}
+		}
+
 		if (id && title && cms_url && slug && status && url) {
-			recordData = { id, title, cms_url, slug, status, url };
+			recordData = { id, title, cms_url, slug, status, url, modelApiKey };
 		} else if (record !== null) {
 			const errors = [];
 			if (id === null) {
