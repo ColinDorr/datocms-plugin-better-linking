@@ -9,6 +9,7 @@
 	},
 	"scripts": {
 		"start": "cross-env BROWSER='none' PUBLIC_URL='/' react-scripts start",
+		"dev": "cross-env PORT=3000 BROWSER=none PUBLIC_URL='http://localhost:3000' react-scripts start",
 		"build": "cross-env PUBLIC_URL='.' react-scripts build",
 		"test": "jest --passWithNoTests",
 		"test:watch": "jest --watch",
