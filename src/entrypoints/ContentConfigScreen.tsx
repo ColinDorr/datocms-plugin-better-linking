@@ -147,36 +147,66 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
 	const getRecordModel = (source: any) => {
 		const url = source?.cms_url || "";
-		const match = url.match(/item_types\/(\d+)/);
+		// Updated regex to match alphanumeric item type IDs with dashes and underscores
+		const match = url.match(/item_types\/([A-Za-z0-9_-]+)/);
 		const recordItemType = match ? match[1] : null;
 
 		if (!recordItemType) {
 			return null;
 		}
 
-		return (
-			itemTypes.filter(
-				(itemType: any) => itemType.id === recordItemType,
-			)[0] ?? null
-		);
+		const matchingItemType =
+			itemTypes.find((itemType: any) => itemType.id === recordItemType) ||
+			null;
+
+		return matchingItemType;
 	};
 
 	const getRecordModelDetails = (sourceRecord: any) => {
 		if (!sourceRecord?.cms_url) {
 			return null;
 		}
+
 		const recordModel = getRecordModel(sourceRecord);
+
+		// Ensure modelApiKey is set
+		let apiKey = undefined;
+		if (recordModel && recordModel.api_key) {
+			apiKey = String(recordModel.api_key);
+		} else if (
+			recordModel &&
+			recordModel.attributes &&
+			recordModel.attributes.api_key
+		) {
+			apiKey = String(recordModel.attributes.api_key);
+		} else {
+			// Fallback: try direct extraction from URL if needed
+			const directMatch = sourceRecord.cms_url.match(
+				/item_types\/([A-Za-z0-9_-]+)/,
+			);
+			if (directMatch && directMatch[1]) {
+				const directItemTypeId = directMatch[1];
+				const directMatchingItemType = itemTypes.find(
+					(it: any) => it.id === directItemTypeId,
+				);
+				if (directMatchingItemType && directMatchingItemType.api_key) {
+					apiKey = String(directMatchingItemType.api_key);
+				}
+			}
+		}
+
 		return {
 			...sourceRecord,
-			modelApiKey: recordModel?.api_key ? recordModel.api_key : undefined,
-			modelData: recordModel?.api_key
-				? {
-						id: recordModel?.id,
-						api_key: recordModel?.api_key,
-						label: recordModel?.label,
-						type: recordModel?.type,
-					}
-				: undefined,
+			modelApiKey: apiKey,
+			modelData:
+				apiKey && recordModel
+					? {
+							id: recordModel?.id,
+							api_key: apiKey,
+							label: recordModel?.label,
+							type: recordModel?.type,
+						}
+					: undefined,
 		};
 	};
 
@@ -256,7 +286,9 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	// Update field setting on change
 	const updateContentSettings = async (valueObject: any) => {
 		storedData = { ...storedData, ...contentSettings, ...valueObject };
-		if (storedData?.record) {
+
+		// Process record to ensure modelApiKey is available
+		if (storedData?.record && Object.keys(storedData.record).length > 0) {
 			const record = getRecordModelDetails(storedData.record);
 			if (record) {
 				storedData.record = { ...record };
@@ -275,10 +307,19 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			email: selectedType === "email" ? storedData.email : defaultEmail,
 		};
 
+		// Ensure modelApiKey is up-to-date
+		if (selectedType === "record" && storedData?.record?.id) {
+			storedData.record =
+				getRecordModelDetails(storedData.record) || storedData.record;
+		}
+
 		const formatted = {
 			isValid: false,
 			type: selectedType,
-			modelApiKey: storedData?.record?.modelApiKey ?? undefined,
+			modelApiKey:
+				selectedType === "record"
+					? storedData?.record?.modelApiKey
+					: undefined,
 			text: getText(storedData, selectedType),
 			ariaLabel:
 				storedData.aria_label ?? getText(storedData, selectedType),
