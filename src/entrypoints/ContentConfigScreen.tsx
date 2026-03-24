@@ -347,6 +347,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	return (
 		<Canvas ctx={ctx}>
 			{contentSettings.linkType?.value ? (
+				<div className={styles["link-field-container"]}>
 				<Form
 					className={[
 						styles["link-field"],
@@ -498,6 +499,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						</FieldGroup>
 					)}
 				</Form>
+				</div>
 			) : (
 				<div>
 					<p className={styles["link-field__error"]}>

@@ -59,3 +59,19 @@
 .link-field__target-label + * {
     height: 38px;
 }
+
+.link-field-container {
+    container-type: inline-size;
+}
+
+@container (max-width: 800px) {
+    .link-field {
+        grid-template-columns: 1fr;
+    }
+    .link-field--col-2 {
+        grid-template-areas: "col1" "col2";
+    }
+    .link-field--col-3 {
+        grid-template-areas: "col1" "col2" "col3";
+    }
+}
