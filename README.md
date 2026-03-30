@@ -1,38 +1,178 @@
+# Button Extended for DatoCMS
 
+A powerful DatoCMS plugin for advanced link and button management. Create fully configurable link fields with support for records, assets, URLs, telephone numbers and email addresses — including styling variants, icons, custom titles, aria-labels, nofollow and target control.
 
-# DatoCMS plugin: Better Linking
-Welcome to the `Better Linking` plugin!
-This DatoCMS plugin allows you to easily create a complex link field, containing:
-- Different link types (records, assets, URLs, email links, or telephone numbers)
-- Custom styling/link classes
-- Custom link text overrides
-- Aria-label text overrides
-- Target window controls
+![Button Extended Cover](docs/cover.png)
 
+> **Fork notice:** This plugin is forked from [Better Linking](https://github.com/ColinDorr/datocms-plugin-better-linking) by **Colin Dorr**. It extends the original with additional features such as icon selection, nofollow control, a redesigned responsive grid layout, and has been migrated to Vite, React 19 and DatoCMS Plugin SDK v2. Full credit to Colin Dorr for the original plugin concept and implementation.
 
-![](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/cover.png)
+---
+
+## Features
+
+- **Multiple link types** — Records, Assets, URLs, Telephone numbers, Email addresses
+- **Styling variants** — Define custom CSS class variants (e.g. CTA, Secondary, Outline) in global or field-level settings
+- **Icon selection** — Configure icon options per styling variant, selectable by editors
+- **Title override** — Optional custom link text
+- **Aria-label** — Dedicated accessibility label for screen readers
+- **Open in new window** — Target `_blank` toggle
+- **NoFollow** — Conditional `rel="nofollow"` toggle (appears when "Open in new window" is active)
+- **Responsive grid layout** — Clean 2-column layout that collapses on narrow containers
+- **Per-field configuration** — Override global plugin settings on individual fields
+- **Structured JSON output** — Full data object with a convenient `formatted` summary for GraphQL queries
+
+![Plugin UI Screenshot](docs/preview.png)
+
+---
 
 ## Installation
-1. Install the plugin.
-2. Go to the plugin and fill in the `Link Settings` and `Styling Settings`. These values will be your default link field values.
-3. Create a new JSON field.
-4. Fill in your preferred name, fieldId, and localization (leave all other fields empty for now).
-5. Go to `Presentation` and choose the `Better Linking` appearance.
-6. Optionally, go to the `Link Settings` and `Styling Settings` to override the default values.
-7. Save the settings and the field.
-8. You can now add this field to your site and start using it.
 
-![cms plugin settings](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/cms-settings.png)
+1. Install the plugin from the [DatoCMS Marketplace](https://www.datocms.com/marketplace/plugins) or add it as a private plugin.
+2. Go to the plugin settings and configure **Link Settings**, **Styling Settings** and **Icon Settings**. These values will serve as defaults for all link fields.
+3. Create a new **JSON field** on a model.
+4. Under **Presentation**, choose the **Button Extended** appearance.
+5. Optionally override the default Link, Styling and Icon settings per field in the field appearance configuration.
+6. Save and start using the field.
 
-## How it works
-After installing the plugin and creating a new field (see installation instructions), you can start using the new `Better Linking` field. `Better Linking` allows you to set default settings in the plugin window and customize those settings for each field in the field appearance window. The settings of the plugin, field, and its content will be saved as a JSON object.
-The JSON data will be hidden in the CMS/frontend and will be replaced with a user-friendly UI, which helps the user to easily create a link with customized data, giving them more control over their links.
+---
 
-![preview userfriendly link ui](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/preview.png)
+## GraphQL Response
+
+When querying a Button Extended field via GraphQL, the full JSON object is returned. The most useful part is the `formatted` object, which contains a clean summary of the link configuration:
+
+```json
+{
+  "formatted": {
+    "isValid": true,
+    "type": "url",
+    "text": "Made by App Bis Web",
+    "ariaLabel": "Based one Better Linking",
+    "url": "app-bis-web.de",
+    "target": "_blank",
+    "rel": "nofollow",
+    "noFollow": true,
+    "class": "cta",
+    "icon": "grift"
+  }
+}
+```
+
+### Formatted fields
+
+| Field | Type | Description |
+|---|---|---|
+| `isValid` | `boolean` | Whether the link has both a URL and text |
+| `type` | `string` | Link type: `record`, `asset`, `url`, `tel`, or `email` |
+| `text` | `string` | Display text (custom title or fallback from link data) |
+| `ariaLabel` | `string` | Accessibility label |
+| `url` | `string \| null` | The resolved URL |
+| `target` | `string` | `_blank` or `_self` |
+| `rel` | `string \| null` | `"nofollow"` when enabled, otherwise `null` |
+| `noFollow` | `boolean` | Whether nofollow is active |
+| `class` | `string \| null` | CSS class from the selected styling variant |
+| `icon` | `string \| null` | Icon identifier from the selected icon option |
+
+### Full response example
+
+<details>
+<summary>Click to expand full JSON response</summary>
+
+```json
+{
+  "linkType": {
+    "label": "URL",
+    "value": "url"
+  },
+  "stylingType": {
+    "label": "CTA",
+    "value": "cta",
+    "allowIcons": true
+  },
+  "iconType": {
+    "label": "Gift",
+    "value": "grift"
+  },
+  "record": {},
+  "asset": {},
+  "url": {
+    "title": "URL",
+    "url": "app-bis-web.de"
+  },
+  "tel": {},
+  "email": {},
+  "formatted": {
+    "isValid": true,
+    "type": "url",
+    "text": "Made by App Bis Web",
+    "ariaLabel": "Based one Better Linking",
+    "url": "app-bis-web.de",
+    "target": "_blank",
+    "rel": "nofollow",
+    "noFollow": true,
+    "class": "cta",
+    "icon": "grift"
+  },
+  "custom_text": "Made by App Bis Web",
+  "aria_label": "Based one Better Linking",
+  "open_in_new_window": true,
+  "nofollow": true,
+  "isValid": true
+}
+```
+
+</details>
+
+---
+
+## Compatibility
+
+| Dependency | Version |
+|---|---|
+| DatoCMS Plugin SDK | v2.x |
+| DatoCMS React UI | v2.x |
+| React | 19.x |
+| Vite | 8.x |
+| TypeScript | 5.x |
+| Node.js | >= 20 |
+
+---
 
 ## Development
-When using the plugin, a JSON data object will be generated with all the settings and filled-in content. This data will be hidden in the CMS/frontend but is accessible using GraphQL and the CDA Playground.
-When querying the data of a `Better Linking` field, the whole JSON data object will be returned, containing all the data and selected options, allowing developers full access to the detailed information of the link.
-This might look a bit intimidating at first glance, but don't be scared. In the JSON data object, you will also find an object called `formatted`. This object contains a minimized representation of all link data. In most cases, this data will be more than enough to handle your links.
 
-![formatted response](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/graphql-response.png)
+```bash
+npm install
+npm run dev
+```
+
+The dev server starts at `http://localhost:5173`. Add this URL as the entry point in your DatoCMS private plugin settings.
+
+```bash
+npm run build    # Production build (outputs to dist/)
+npm test         # Run tests
+```
+
+---
+
+## Credits
+
+This plugin is based on [Better Linking](https://github.com/ColinDorr/datocms-plugin-better-linking) by **Colin Dorr**. The original plugin provided the foundation for link type management, styling variants, custom text, aria-labels and target control within DatoCMS.
+
+**Button Extended** builds on top of this by adding:
+
+- Icon selection dimension with per-variant configuration
+- NoFollow (`rel="nofollow"`) toggle
+- Redesigned responsive 2-column grid layout
+- Migration from Create React App to Vite
+- Upgrade to React 19 and DatoCMS Plugin SDK v2
+- Lucide Icons (locally bundled, no CDN)
+- Improved type safety and error handling
+
+---
+
+## Author
+
+**Jan Luther** — [app-bis-web.de](https://app-bis-web.de)
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](License.md).

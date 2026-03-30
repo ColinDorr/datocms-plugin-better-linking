@@ -1,9 +1,9 @@
 {
 	"private": false,
-	"name": "datocms-plugin-better-linking",
-	"homepage": "https://github.com/ColinDorr/datocms-plugin-better-linking",
+	"name": "datocms-plugin-button-extended",
+	"homepage": "https://github.com/JanLuther/datocms-plugin-button-extended",
 	"version": "1.0.0",
-	"description": "DatoCMS plugin for advanced link management with records, assets, URLs, telephone and email links — including styling variants, icons, titles, aria-labels and nofollow control.",
+	"description": "DatoCMS plugin for advanced link and button management — supporting records, assets, URLs, telephone and email links with styling variants, icons, titles, aria-labels, nofollow and target control.",
 	"engines": {
 		"node": ">=20.0.0"
 	},
@@ -49,6 +49,7 @@
 	"keywords": [
 		"datocms-plugin",
 		"datocms",
+		"button",
 		"record",
 		"asset",
 		"url",
@@ -69,12 +70,12 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ColinDorr/datocms-plugin-better-linking.git"
+		"url": "git+https://github.com/JanLuther/datocms-plugin-button-extended.git"
 	},
-	"author": "Colin Dorr",
-	"license": "ISC",
+	"author": "Jan Luther",
+	"license": "GPL-3.0",
 	"datoCmsPlugin": {
-		"title": "Better Linking",
+		"title": "Button Extended",
 		"previewImage": "docs/preview.png",
 		"coverImage": "docs/cover.png",
 		"entryPoint": "dist/index.html",
