@@ -1,19 +1,13 @@
-import { Button, TextField, FieldGroup, SwitchField } from "datocms-react-ui";
+import { Button, TextField, FieldGroup } from "datocms-react-ui";
 import { Trash2 } from "lucide-react";
 import styles from "./../../../styles/styles.StylingSettings.module.css";
 
-type ItemType = {
-	id: number;
-	label: string;
-	value: string;
-	allowIcons: boolean;
-};
+type ItemType = { id: number; label: string; value: string };
 type Props = {
 	item: ItemType;
 	onIdChange: (value: number) => void;
 	onLabelChange: (value: string) => void;
 	onValueChange: (value: string) => void;
-	onAllowIconsChange: (value: boolean) => void;
 	onDelete: (value: number) => void;
 	duplicateArrays: {
 		duplicateIds: number[];
@@ -23,12 +17,11 @@ type Props = {
 	isRequired: boolean;
 };
 
-export default function StylingItem({
+export default function IconItem({
 	item,
 	onIdChange,
 	onLabelChange,
 	onValueChange,
-	onAllowIconsChange,
 	onDelete,
 	duplicateArrays,
 	isRequired,
@@ -85,14 +78,6 @@ export default function StylingItem({
 					}}
 				/>
 			</FieldGroup>
-
-			<SwitchField
-				id={`${item.id}-allowIcons`}
-				name={`${item.id}-allowIcons`}
-				label="Icons"
-				value={item.allowIcons}
-				onChange={onAllowIconsChange}
-			/>
 
 			<Button
 				buttonSize="xs"

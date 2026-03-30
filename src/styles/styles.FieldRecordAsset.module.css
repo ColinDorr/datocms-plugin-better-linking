@@ -12,7 +12,7 @@
 
 .field__selection-group__label {
     align-items: center;
-    color: var(--light-body-color);
+    color: var(--base-body-color);
     display: flex;
     margin: 0 0 var(--spacing-s) 0;
 }

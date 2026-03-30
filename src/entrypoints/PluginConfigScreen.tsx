@@ -3,6 +3,7 @@ import { Canvas, Section } from "datocms-react-ui";
 
 import LinkSettings from "./../components/controlls/LinkSettings";
 import StylingSettings from "../components/controlls/StylingSettings";
+import IconSettings from "../components/controlls/IconSettings";
 
 type Props = {
 	ctx: any;
@@ -11,6 +12,7 @@ type Props = {
 export default function PluginConfigScreen({ ctx }: Props) {
 	const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(true);
 	const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(true);
+	const [iconSettingIsOpen, setIconSettingIsOpen] = useState(true);
 
 	return (
 		<Canvas ctx={ctx}>
@@ -127,6 +129,16 @@ export default function PluginConfigScreen({ ctx }: Props) {
 					}}
 				>
 					<StylingSettings ctx={ctx} configType="plugin_settings" />
+				</Section>
+				<Section
+					title="Icon settings"
+					collapsible={{
+						isOpen: iconSettingIsOpen,
+						onToggle: () =>
+							setIconSettingIsOpen((prev) => !prev),
+					}}
+				>
+					<IconSettings ctx={ctx} configType="plugin_settings" />
 				</Section>
 			</div>
 		</Canvas>

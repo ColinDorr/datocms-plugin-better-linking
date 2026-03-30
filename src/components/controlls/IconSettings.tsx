@@ -2,7 +2,7 @@ import React, { useState, MouseEvent } from "react";
 import { Form, Button, FieldGroup } from "datocms-react-ui";
 import { Plus } from "lucide-react";
 
-import StylingItem from "./partials/StylingItem";
+import IconItem from "./partials/IconItem";
 import Helpers from "./../../utils/helpers";
 
 import styles from "./../../styles/styles.StylingSettings.module.css";
@@ -10,42 +10,35 @@ import styles from "./../../styles/styles.StylingSettings.module.css";
 const { getCtxParams, getDefaultValue } = Helpers();
 
 type PropTypes = { ctx: any; configType: string };
-type KeyValuePairType = {
-	id: number;
-	label: string;
-	value: string;
-	allowIcons: boolean;
-};
-type StylingType = { label: string; value: string; allowIcons?: boolean };
+type KeyValuePairType = { id: number; label: string; value: string };
+type IconType = { label: string; value: string };
 
-const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
+const IconSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 	const ctxParameters: any = getCtxParams(ctx, configType);
 
-	const stylingOptions =
+	const iconOptions =
 		(getDefaultValue(
 			ctxParameters,
-			"stylingOptions",
+			"iconOptions",
 			[],
-		) as StylingType[]) ?? [];
+		) as IconType[]) ?? [];
 	const [keyValueList, setKeyValueList] = useState<KeyValuePairType[]>(
-		stylingOptions.map((i, index) => ({
+		iconOptions.map((i, index) => ({
 			id: index,
 			label: i.label,
 			value: i.value,
-			allowIcons: i.allowIcons ?? false,
 		})),
 	);
 
 	const updateCtx = async () => {
-		const stylingOptions: StylingType[] = [];
+		const iconOptions: IconType[] = [];
 		keyValueList.forEach((item: KeyValuePairType) => {
-			stylingOptions.push({
+			iconOptions.push({
 				label: item.label,
 				value: item.value,
-				allowIcons: item.allowIcons,
 			});
 		});
-		const settings = { ...ctxParameters, stylingOptions };
+		const settings = { ...ctxParameters, iconOptions };
 
 		if (configType === "plugin_settings") {
 			ctx.updatePluginParameters(settings);
@@ -82,12 +75,6 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 	const handleValueChange = (value: string, id: number) => {
 		const updatedKeyValueList = [...keyValueList];
 		updatedKeyValueList[id].value = value;
-		updateKeyValueList(updatedKeyValueList);
-	};
-
-	const handleAllowIconsChange = (value: boolean, id: number) => {
-		const updatedKeyValueList = [...keyValueList];
-		updatedKeyValueList[id].allowIcons = value;
 		updateKeyValueList(updatedKeyValueList);
 	};
 
@@ -151,12 +138,7 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 			const currentTimestamp = Date.now();
 			const newList: KeyValuePairType[] = [
 				...keyValueList,
-				{
-					id: currentTimestamp,
-					label: "",
-					value: "",
-					allowIcons: false,
-				},
+				{ id: currentTimestamp, label: "", value: "" },
 			];
 			updateKeyValueList(newList);
 		}
@@ -171,7 +153,7 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 				<FieldGroup className={styles["style-settings__controlls"]}>
 					{keyValueList.map(
 						(item: KeyValuePairType, index: number) => (
-							<StylingItem
+							<IconItem
 								key={item.id}
 								item={item}
 								onIdChange={(value: number) =>
@@ -182,9 +164,6 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 								}
 								onValueChange={(value: string) =>
 									handleValueChange(value, index)
-								}
-								onAllowIconsChange={(value: boolean) =>
-									handleAllowIconsChange(value, index)
 								}
 								onDelete={() => deleteItem(index)}
 								duplicateArrays={duplicateArrays()}
@@ -210,7 +189,7 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 						buttonType="primary"
 						className={styles["style-settings__submit"]}
 					>
-						Save styling settings
+						Save icon settings
 					</Button>
 				</FieldGroup>
 
@@ -227,4 +206,4 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 	);
 };
 
-export default StylingSettings;
+export default IconSettings;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FieldGroup, Button, SelectField } from "datocms-react-ui";
+import { Trash2 } from "lucide-react";
 import styles from "./../../styles/styles.FieldRecordAsset.module.css";
 
 type LinkType = { label: string; api_key?: string; value: string };
@@ -168,24 +169,7 @@ const FieldRecord: React.FC<Props> = ({
 				<Button
 					buttonSize="xs"
 					buttonType="negative"
-					leftIcon={
-						<>
-							<span hidden className="sr-only">
-								Delete{" "}
-							</span>
-							<svg
-								aria-hidden="true"
-								viewBox="0 0 448 512"
-								width="1em"
-								height="1em"
-							>
-								<path
-									d="M432 32H312l-9.4-18.7A24 24 0 00281.1 0H166.8a23.72 23.72 0 00-21.4 13.3L136 32H16A16 16 0 000 48v32a16 16 0 0016 16h416a16 16 0 0016-16V48a16 16 0 00-16-16zM53.2 467a48 48 0 0047.9 45h245.8a48 48 0 0047.9-45L416 128H32z"
-									fill="currentColor"
-								></path>
-							</svg>
-						</>
-					}
+					leftIcon={<Trash2 size={14} />}
 					onClick={() => updateRecordValue(null)}
 				/>
 			</div>

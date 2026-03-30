@@ -25,6 +25,14 @@
   grid-column: 1;
 }
 
+.link-field__icon {
+  grid-column: 2;
+}
+
+.link-field__icon--col1 {
+  grid-column: 1;
+}
+
 .link-field__custom-text {
   grid-column: 2;
 }
@@ -65,6 +73,8 @@
   .link-field__type,
   .link-field__link,
   .link-field__styling,
+  .link-field__icon,
+  .link-field__icon--col1,
   .link-field__custom-text,
   .link-field__custom-text--full,
   .link-field__bottom-row {

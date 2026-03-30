@@ -5,6 +5,7 @@ import Helpers from "./../utils/helpers";
 
 import LinkSettings from "./../components/controlls/LinkSettings";
 import StylingSettings from "../components/controlls/StylingSettings";
+import IconSettings from "../components/controlls/IconSettings";
 
 type PropTypes = {
 	ctx: RenderManualFieldExtensionConfigScreenCtx;
@@ -14,6 +15,7 @@ const { getCtxParams } = Helpers();
 export default function FieldConfigScreen({ ctx }: PropTypes) {
 	const [linkSettingIsOpen, setLinkSettingIsOpen] = useState(false);
 	const [stylingSettingIsOpen, setStylingSettingIsOpen] = useState(false);
+	const [iconSettingIsOpen, setIconSettingIsOpen] = useState(false);
 	const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 
 	return (
@@ -35,6 +37,15 @@ export default function FieldConfigScreen({ ctx }: PropTypes) {
 				}}
 			>
 				<StylingSettings ctx={ctx} configType="field_settings" />
+			</Section>
+			<Section
+				title="Icon settings"
+				collapsible={{
+					isOpen: iconSettingIsOpen,
+					onToggle: () => setIconSettingIsOpen((prev) => !prev),
+				}}
+			>
+				<IconSettings ctx={ctx} configType="field_settings" />
 			</Section>
 
 			<Button

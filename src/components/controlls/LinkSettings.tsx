@@ -73,6 +73,11 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 			value: getDefaultValue(ctxParameters, "allow_new_target", true),
 		},
 		{
+			id: "allow_icons",
+			label: "Allow Icons",
+			value: getDefaultValue(ctxParameters, "allow_icons", true),
+		},
+		{
 			id: "itemTypes",
 			label: "Item Types",
 			value: getDefaultValue(ctxParameters, "itemTypes", []),
@@ -188,7 +193,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 				/>
 
 				<FieldGroup className={styles["link-settings__link-types"]}>
-					{configSettings.slice(0, -4).map((param: ConfigSetting) => (
+					{configSettings.slice(0, -5).map((param: ConfigSetting) => (
 						<div
 							key={param.id}
 							className={styles["link-settings__link-type-item"]}
@@ -216,7 +221,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 				</FieldGroup>
 				<FieldGroup className={styles["link-settings__link-controlls"]}>
 					{configSettings
-						.slice(-4, -1)
+						.slice(-5, -1)
 						.map((param: ConfigSetting) => (
 							<div
 								key={param.id}

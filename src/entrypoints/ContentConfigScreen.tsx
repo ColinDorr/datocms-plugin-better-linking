@@ -24,7 +24,12 @@ type PropTypes = {
 
 type LinkTypeSting = "record" | "asset" | "url" | "tel" | "email" | "";
 type LinkTypeData = { label: string; value: LinkTypeSting };
-type StylingTypeData = { label: string; value: string };
+type StylingTypeData = {
+	label: string;
+	value: string;
+	allowIcons?: boolean;
+};
+type IconTypeData = { label: string; value: string };
 type RecordData = {
 	cms_url: string | undefined;
 	id: string | undefined;
@@ -68,6 +73,7 @@ type MailData = {
 type StoredData = {
 	linkType: LinkTypeData;
 	stylingType: StylingTypeData;
+	iconType: IconTypeData;
 	record: RecordData;
 	asset: AssetData;
 	url: UrlData;
@@ -84,6 +90,7 @@ type StoredData = {
 let storedData = {
 	linkType: {},
 	stylingType: {},
+	iconType: {},
 	record: {},
 	asset: {},
 	url: {},
@@ -97,28 +104,27 @@ let storedData = {
 } as StoredData;
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
-	// Retrieve parameters from context
 	const locale: string = ctx?.locale;
 	const ctxFieldParameters: any = getCtxParams(ctx, "field_settings");
 	const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
 	const ctxParameters: any = getCtxParams(ctx, "content_settings");
 
-	// List field settings data
 	const itemTypes =
 		ctxFieldParameters.itemTypes || ctxPluginParameters.itemTypes || [];
 	let linkTypeOptions: LinkTypeData[] =
-		ctxFieldParameters?.linkTypeOptions || []; // record, assets, url, mail, tel
+		ctxFieldParameters?.linkTypeOptions || [];
 
 	if (itemTypes.length === 0) {
 		linkTypeOptions = linkTypeOptions.filter((e) => e.value !== "record");
 	}
 
-	// Set default values
 	const defaultLinkType = { label: "--select--", value: "" } as LinkTypeData;
-	let stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
+	const stylingOptions = ctxFieldParameters?.stylingOptions ?? [];
+	const iconOptions = ctxFieldParameters?.iconOptions ?? [];
 	const allowNewTarget = ctxFieldParameters?.allow_new_target ?? true;
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
+	const allowIcons = ctxFieldParameters?.allow_icons ?? true;
 	const defaultRecord = {
 		cms_url: undefined,
 		id: undefined,
@@ -142,10 +148,10 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	const defaultEmail = { title: undefined, url: undefined };
 
 	const hasStyling = stylingOptions && stylingOptions.length > 0;
+	const hasIcons = iconOptions.length > 0 && allowIcons;
 
 	const getRecordModel = (source: any) => {
 		const url = source?.cms_url || "";
-		// Updated regex to match alphanumeric item type IDs with dashes and underscores
 		const match = url.match(/item_types\/([A-Za-z0-9_-]+)/);
 		const recordItemType = match ? match[1] : null;
 
@@ -167,7 +173,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 
 		const recordModel = getRecordModel(sourceRecord);
 
-		// Ensure modelApiKey is set
 		let apiKey = undefined;
 		if (recordModel && recordModel.api_key) {
 			apiKey = String(recordModel.api_key);
@@ -178,7 +183,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		) {
 			apiKey = String(recordModel.attributes.api_key);
 		} else {
-			// Fallback: try direct extraction from URL if needed
 			const directMatch = sourceRecord.cms_url.match(
 				/item_types\/([A-Za-z0-9_-]+)/,
 			);
@@ -239,7 +243,6 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		}
 	};
 
-	// Store field settings
 	const savedContentSettings: StoredData = {
 		linkType: getDefaultValue(
 			ctxParameters,
@@ -247,11 +250,19 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			linkTypeOptions?.[0] || defaultLinkType,
 		),
 		stylingType:
-			stylingOptions && stylingOptions.length > 0
+			hasStyling
 				? getDefaultValue(
 						ctxParameters,
 						"stylingType",
 						stylingOptions?.[0] || undefined,
+					)
+				: undefined,
+		iconType:
+			hasIcons
+				? getDefaultValue(
+						ctxParameters,
+						"iconType",
+						iconOptions?.[0] || undefined,
 					)
 				: undefined,
 		record: getRecordModelDetails(
@@ -281,11 +292,25 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	const [contentSettings, setContentSettings] =
 		useState<StoredData>(savedContentSettings);
 
-	// Update field setting on change
+	const selectedStyleAllowsIcons =
+		!hasStyling || contentSettings.stylingType?.allowIcons === true;
+	const showIconSelect = hasIcons && selectedStyleAllowsIcons;
+
+	const hasMiddleRow = hasStyling || showIconSelect;
+
+	const getCustomTextClass = () => {
+		if (hasStyling && showIconSelect) {
+			return styles["link-field__custom-text--full"];
+		}
+		if (!hasStyling && !showIconSelect) {
+			return styles["link-field__custom-text--full"];
+		}
+		return styles["link-field__custom-text"];
+	};
+
 	const updateContentSettings = async (valueObject: any) => {
 		storedData = { ...storedData, ...contentSettings, ...valueObject };
 
-		// Process record to ensure modelApiKey is available
 		if (storedData?.record && Object.keys(storedData.record).length > 0) {
 			const record = getRecordModelDetails(storedData.record);
 			if (record) {
@@ -305,11 +330,19 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			email: selectedType === "email" ? storedData.email : defaultEmail,
 		};
 
-		// Ensure modelApiKey is up-to-date
 		if (selectedType === "record" && storedData?.record?.id) {
 			storedData.record =
 				getRecordModelDetails(storedData.record) || storedData.record;
 		}
+
+		const styleAllowsIcons =
+			!hasStyling || storedData.stylingType?.allowIcons === true;
+		if (!styleAllowsIcons || !hasIcons) {
+			storedData.iconType = undefined as any;
+		}
+
+		const currentShowIcon =
+			hasIcons && styleAllowsIcons;
 
 		const formatted = {
 			isValid: false,
@@ -327,6 +360,9 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 					: null,
 			target: storedData?.open_in_new_window ? "_blank" : "_self",
 			class: storedData?.stylingType?.value || null,
+			icon: currentShowIcon
+				? storedData?.iconType?.value || null
+				: null,
 		};
 
 		formatted.isValid = formatted.text && formatted.url ? true : false;
@@ -429,17 +465,33 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						</div>
 					)}
 
-					{allowCustomText && (
+					{showIconSelect && (
 						<div
-							className={[
-								styles["link-field__custom-text"],
-								!hasStyling
-									? styles["link-field__custom-text--full"]
-									: "",
-							]
-								.filter(Boolean)
-								.join(" ")}
+							className={
+								hasStyling
+									? styles["link-field__icon"]
+									: styles["link-field__icon--col1"]
+							}
 						>
+							<SelectField
+								name="icon"
+								id="icon"
+								label="Icon"
+								value={contentSettings.iconType}
+								selectInputProps={{
+									options: iconOptions as IconTypeData[],
+								}}
+								onChange={(newValue) => {
+									updateContentSettings({
+										iconType: newValue,
+									});
+								}}
+							/>
+						</div>
+					)}
+
+					{allowCustomText && (
+						<div className={getCustomTextClass()}>
 							<TextField
 								name="custom_text"
 								id="custom_text"
