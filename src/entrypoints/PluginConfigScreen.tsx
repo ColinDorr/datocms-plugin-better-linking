@@ -98,8 +98,8 @@ export default function PluginConfigScreen({ ctx }: Props) {
 				</p>
 				<p>
 					When querying the data of a{" "}
-					<strong>"Button Extended"</strong> field, the whole JSON data
-					object will be returned, containing all the data and
+					<strong>"Button Extended"</strong> field, the whole JSON
+					data object will be returned, containing all the data and
 					selected options, allowing developers full access to the
 					detailed information of the link.
 				</p>

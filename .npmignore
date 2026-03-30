@@ -1,5 +1,12 @@
 node_modules
 src
-tests
-.eslintrc
+public
+.husky
 .gitignore
+.prettierrc.json
+.prettierignore
+jest.config.js
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+vite.config.ts
