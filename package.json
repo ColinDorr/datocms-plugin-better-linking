@@ -1,7 +1,7 @@
 {
 	"private": false,
 	"name": "datocms-plugin-button-extended",
-	"homepage": "https://github.com/JanLuther/datocms-plugin-button-extended",
+	"homepage": "https://github.com/appbisweb/datocms-plugin-button-extended",
 	"version": "1.0.0",
 	"description": "DatoCMS plugin for advanced link and button management — supporting records, assets, URLs, telephone and email links with styling variants, icons, titles, aria-labels, nofollow and target control.",
 	"engines": {
@@ -70,7 +70,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/JanLuther/datocms-plugin-button-extended.git"
+		"url": "git+https://github.com/appbisweb/datocms-plugin-button-extended.git"
 	},
 	"author": "Jan Luther",
 	"license": "GPL-3.0",

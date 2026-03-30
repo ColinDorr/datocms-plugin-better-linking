@@ -17,7 +17,7 @@ export default function PluginConfigScreen({ ctx }: Props) {
 	return (
 		<Canvas ctx={ctx}>
 			<div className="content">
-				<p>Welcome to the "Better Linking" plugin!</p>
+				<p>Welcome to the "Button Extended" plugin!</p>
 				<p>
 					This DatoCMS plugin allows you to easily create a complex
 					link field, containing:
@@ -27,10 +27,11 @@ export default function PluginConfigScreen({ ctx }: Props) {
 						Different link types (records, assets, URLs, email
 						links, or telephone numbers)
 					</li>
-					<li>Custom styling/link classes</li>
-					<li>Custom link text overrides</li>
+					<li>Custom styling variants</li>
+					<li>Icon selection per variant</li>
+					<li>Custom title overrides</li>
 					<li>Aria-label text overrides</li>
-					<li>Target window controls</li>
+					<li>Target window and NoFollow controls</li>
 				</ul>
 			</div>
 
@@ -40,9 +41,10 @@ export default function PluginConfigScreen({ ctx }: Props) {
 					<li>Install the plugin.</li>
 					<li>
 						Go to the plugin and fill in the{" "}
-						<strong>"Link Settings"</strong> and{" "}
-						<strong>"Styling Settings"</strong>. These values will
-						be your default link field values.
+						<strong>"Link Settings"</strong>,{" "}
+						<strong>"Styling Settings"</strong> and{" "}
+						<strong>"Icon Settings"</strong>. These values will be
+						your default link field values.
 					</li>
 					<li>Create a new JSON field.</li>
 					<li>
@@ -51,12 +53,13 @@ export default function PluginConfigScreen({ ctx }: Props) {
 					</li>
 					<li>
 						Go to <strong>"Presentation"</strong> and choose the{" "}
-						<strong>"Better Linking"</strong> appearance.
+						<strong>"Button Extended"</strong> appearance.
 					</li>
 					<li>
-						Optionally, go to the <strong>"Link Settings"</strong>{" "}
-						and <strong>"Styling Settings"</strong> to override the
-						default values.
+						Optionally, go to the <strong>"Link Settings"</strong>,{" "}
+						<strong>"Styling Settings"</strong> and{" "}
+						<strong>"Icon Settings"</strong> to override the default
+						values.
 					</li>
 					<li>Save the settings and the field.</li>
 					<li>
@@ -71,11 +74,11 @@ export default function PluginConfigScreen({ ctx }: Props) {
 				<p>
 					After installing the plugin and creating a new field (see
 					installation instructions), you can start using the new
-					"Better Linking" field. "Better Linking" allows you to set
-					default settings in the plugin window and customize those
-					settings for each field in the field appearance window. The
-					settings of the plugin, field, and its content will be saved
-					as a JSON object.
+					"Button Extended" field. It allows you to set default
+					settings in the plugin window and customize those settings
+					for each field in the field appearance window. The settings
+					of the plugin, field, and its content will be saved as a
+					JSON object.
 				</p>
 				<p>
 					The JSON data will be hidden in the CMS/frontend and will be
@@ -95,7 +98,7 @@ export default function PluginConfigScreen({ ctx }: Props) {
 				</p>
 				<p>
 					When querying the data of a{" "}
-					<strong>"Better Linking"</strong> field, the whole JSON data
+					<strong>"Button Extended"</strong> field, the whole JSON data
 					object will be returned, containing all the data and
 					selected options, allowing developers full access to the
 					detailed information of the link.

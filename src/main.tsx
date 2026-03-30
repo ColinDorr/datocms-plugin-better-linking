@@ -8,8 +8,8 @@ import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
 import packageJson from "../package.json";
 
 const fieldSettings = {
-	id: "betterLinking",
-	name: "Better Linking",
+	id: "buttonExtended",
+	name: "Button Extended",
 };
 
 connect({
