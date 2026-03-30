@@ -8,8 +8,11 @@ const Helpers = () => {
 		);
 
 		if (configType === "content_settings" && formFieldValues) {
-			const data = formFieldValues;
-			return JSON.parse(data);
+			try {
+				return JSON.parse(formFieldValues);
+			} catch {
+				return {};
+			}
 		}
 		// Use when configType is field_setting or when content_settings is empty
 		if (

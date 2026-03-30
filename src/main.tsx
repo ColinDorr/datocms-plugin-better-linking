@@ -1,20 +1,11 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import {
-	connect,
-	OnBootCtx,
-	Field,
-	IntentCtx,
-	FieldIntentCtx,
-	RenderFieldExtensionCtx,
-	RenderManualFieldExtensionConfigScreenCtx,
-} from "datocms-plugin-sdk";
+import { connect } from "datocms-plugin-sdk";
 import "datocms-react-ui/styles.css";
 import { render } from "./utils/render";
 
 import PluginConfigScreen from "./entrypoints/PluginConfigScreen";
 import FieldConfigScreen from "./entrypoints/FieldConfigScreen";
 import ContentConfigScreen from "./entrypoints/ContentConfigScreen";
+import packageJson from "../package.json";
 
 const fieldSettings = {
 	id: "betterLinking",
@@ -22,8 +13,8 @@ const fieldSettings = {
 };
 
 connect({
-	async onBoot(ctx: OnBootCtx) {
-		const { version } = require("../package.json");
+	async onBoot(ctx) {
+		const version = packageJson.version;
 
 		if (ctx.plugin.attributes.parameters?.version === version) {
 			return;
@@ -37,20 +28,18 @@ connect({
 	renderConfigScreen(ctx) {
 		return render(<PluginConfigScreen ctx={ctx} />);
 	},
-	manualFieldExtensions(ctx: IntentCtx) {
+	manualFieldExtensions() {
 		return [
 			{
 				id: fieldSettings.id,
 				name: fieldSettings.name,
-				type: "editor",
-				fieldTypes: ["json"],
+				type: "editor" as const,
+				fieldTypes: ["json" as const],
 				configurable: true,
 			},
 		];
 	},
-
-	// Add field editor "Linkit" to link field appearences
-	overrideFieldExtensions(field: Field, ctx: FieldIntentCtx) {
+	overrideFieldExtensions(field) {
 		if (
 			field.attributes.field_type === "json" &&
 			field.attributes.appearance?.field_extension === fieldSettings.id
@@ -62,27 +51,10 @@ connect({
 			};
 		}
 	},
-
-	// Render field configuration screens
-	renderManualFieldExtensionConfigScreen(
-		fieldExtensionId: string,
-		ctx: RenderManualFieldExtensionConfigScreenCtx,
-	) {
-		const container = document.getElementById("root") as HTMLElement;
-		const root = createRoot(container);
-
-		root.render(
-			<React.StrictMode>
-				<FieldConfigScreen ctx={ctx} />
-			</React.StrictMode>,
-		);
+	renderManualFieldExtensionConfigScreen(_fieldExtensionId, ctx) {
+		return render(<FieldConfigScreen ctx={ctx} />);
 	},
-
-	// Render Field in records
-	renderFieldExtension(
-		fieldExtensionId: string,
-		ctx: RenderFieldExtensionCtx,
-	) {
+	renderFieldExtension(fieldExtensionId, ctx) {
 		switch (fieldExtensionId) {
 			case fieldSettings.id:
 				return render(<ContentConfigScreen ctx={ctx} />);

@@ -59,7 +59,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 		},
 		{
 			id: "allow_custom_text",
-			label: "Allow Custom text",
+			label: "Allow Title",
 			value: getDefaultValue(ctxParameters, "allow_custom_text", true),
 		},
 		{
@@ -71,6 +71,11 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 			id: "allow_new_target",
 			label: "Allow Target control",
 			value: getDefaultValue(ctxParameters, "allow_new_target", true),
+		},
+		{
+			id: "allow_nofollow",
+			label: "Allow NoFollow",
+			value: getDefaultValue(ctxParameters, "allow_nofollow", true),
 		},
 		{
 			id: "allow_icons",
@@ -193,7 +198,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 				/>
 
 				<FieldGroup className={styles["link-settings__link-types"]}>
-					{configSettings.slice(0, -5).map((param: ConfigSetting) => (
+					{configSettings.slice(0, -6).map((param: ConfigSetting) => (
 						<div
 							key={param.id}
 							className={styles["link-settings__link-type-item"]}
@@ -221,7 +226,7 @@ const LinkSetting: React.FC<PropTypes> = ({ ctx, configType }) => {
 				</FieldGroup>
 				<FieldGroup className={styles["link-settings__link-controlls"]}>
 					{configSettings
-						.slice(-5, -1)
+						.slice(-6, -1)
 						.map((param: ConfigSetting) => (
 							<div
 								key={param.id}

@@ -82,7 +82,11 @@ export default function IconItem({
 			<Button
 				buttonSize="xs"
 				buttonType="negative"
-				leftIcon={<Trash2 size={14} />}
+				leftIcon={
+					<span style={{ display: "inline-flex", alignItems: "center" }}>
+						<Trash2 size={14} strokeWidth={2} style={{ fill: "none" }} />
+					</span>
+				}
 				onClick={() => onDelete(item.id)}
 			>
 				Delete

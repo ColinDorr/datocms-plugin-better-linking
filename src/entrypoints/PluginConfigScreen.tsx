@@ -134,8 +134,7 @@ export default function PluginConfigScreen({ ctx }: Props) {
 					title="Icon settings"
 					collapsible={{
 						isOpen: iconSettingIsOpen,
-						onToggle: () =>
-							setIconSettingIsOpen((prev) => !prev),
+						onToggle: () => setIconSettingIsOpen((prev) => !prev),
 					}}
 				>
 					<IconSettings ctx={ctx} configType="plugin_settings" />

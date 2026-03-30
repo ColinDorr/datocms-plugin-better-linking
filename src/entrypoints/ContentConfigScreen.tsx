@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
 	Canvas,
 	Form,
@@ -82,28 +82,32 @@ type StoredData = {
 	custom_text: string | number | readonly string[] | undefined;
 	aria_label: string | number | readonly string[] | undefined;
 	open_in_new_window: boolean;
+	nofollow: boolean;
 	formatted: any;
 	isValid: boolean;
 	plugin_version: string;
 };
 
-let storedData = {
-	linkType: {},
-	stylingType: {},
-	iconType: {},
-	record: {},
-	asset: {},
-	url: {},
-	tel: {},
-	email: {},
+const initialStoredData: StoredData = {
+	linkType: {} as LinkTypeData,
+	stylingType: {} as StylingTypeData,
+	iconType: {} as IconTypeData,
+	record: {} as RecordData,
+	asset: {} as AssetData,
+	url: {} as UrlData,
+	tel: {} as TelData,
+	email: {} as MailData,
 	formatted: {},
 	custom_text: undefined,
 	aria_label: undefined,
 	open_in_new_window: false,
+	nofollow: false,
 	isValid: false,
-} as StoredData;
+	plugin_version: "",
+};
 
 export default function ContentConigScreen({ ctx }: PropTypes) {
+	const storedDataRef = useRef<StoredData>({ ...initialStoredData });
 	const locale: string = ctx?.locale;
 	const ctxFieldParameters: any = getCtxParams(ctx, "field_settings");
 	const ctxPluginParameters: any = getCtxParams(ctx, "plugin_settings");
@@ -125,6 +129,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	const allowCustomText = ctxFieldParameters?.allow_custom_text ?? true;
 	const allowAriaLabel = ctxFieldParameters?.allow_aria_label ?? true;
 	const allowIcons = ctxFieldParameters?.allow_icons ?? true;
+	const allowNoFollow = ctxFieldParameters?.allow_nofollow ?? true;
 	const defaultRecord = {
 		cms_url: undefined,
 		id: undefined,
@@ -249,22 +254,20 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 			"linkType",
 			linkTypeOptions?.[0] || defaultLinkType,
 		),
-		stylingType:
-			hasStyling
-				? getDefaultValue(
-						ctxParameters,
-						"stylingType",
-						stylingOptions?.[0] || undefined,
-					)
-				: undefined,
-		iconType:
-			hasIcons
-				? getDefaultValue(
-						ctxParameters,
-						"iconType",
-						iconOptions?.[0] || undefined,
-					)
-				: undefined,
+		stylingType: hasStyling
+			? getDefaultValue(
+					ctxParameters,
+					"stylingType",
+					stylingOptions?.[0] || undefined,
+				)
+			: undefined,
+		iconType: hasIcons
+			? getDefaultValue(
+					ctxParameters,
+					"iconType",
+					iconOptions?.[0] || undefined,
+				)
+			: undefined,
 		record: getRecordModelDetails(
 			getDefaultValue(ctxParameters, "record", defaultRecord),
 		),
@@ -282,6 +285,9 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		open_in_new_window: allowNewTarget
 			? getDefaultValue(ctxParameters, "open_in_new_window", false)
 			: false,
+		nofollow: allowNoFollow
+			? getDefaultValue(ctxParameters, "nofollow", false)
+			: false,
 		isValid: getDefaultValue(ctxParameters, "isValid", false),
 		plugin_version: getDefaultValue(
 			ctxPluginParameters,
@@ -296,83 +302,76 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 		!hasStyling || contentSettings.stylingType?.allowIcons === true;
 	const showIconSelect = hasIcons && selectedStyleAllowsIcons;
 
-	const hasMiddleRow = hasStyling || showIconSelect;
-
-	const getCustomTextClass = () => {
-		if (hasStyling && showIconSelect) {
-			return styles["link-field__custom-text--full"];
-		}
-		if (!hasStyling && !showIconSelect) {
-			return styles["link-field__custom-text--full"];
-		}
-		return styles["link-field__custom-text"];
-	};
-
 	const updateContentSettings = async (valueObject: any) => {
-		storedData = { ...storedData, ...contentSettings, ...valueObject };
+		let data = {
+			...storedDataRef.current,
+			...contentSettings,
+			...valueObject,
+		};
 
-		if (storedData?.record && Object.keys(storedData.record).length > 0) {
-			const record = getRecordModelDetails(storedData.record);
+		if (data?.record && Object.keys(data.record).length > 0) {
+			const record = getRecordModelDetails(data.record);
 			if (record) {
-				storedData.record = { ...record };
+				data.record = { ...record };
 			}
 		}
 
-		const selectedType: LinkTypeSting = storedData.linkType.value;
+		const selectedType: LinkTypeSting = data.linkType.value;
 
-		storedData = {
-			...storedData,
-			record:
-				selectedType === "record" ? storedData.record : defaultRecord,
-			asset: selectedType === "asset" ? storedData.asset : defaultAsset,
-			url: selectedType === "url" ? storedData.url : defaultUrl,
-			tel: selectedType === "tel" ? storedData.tel : defaultTel,
-			email: selectedType === "email" ? storedData.email : defaultEmail,
+		data = {
+			...data,
+			record: selectedType === "record" ? data.record : defaultRecord,
+			asset: selectedType === "asset" ? data.asset : defaultAsset,
+			url: selectedType === "url" ? data.url : defaultUrl,
+			tel: selectedType === "tel" ? data.tel : defaultTel,
+			email: selectedType === "email" ? data.email : defaultEmail,
 		};
 
-		if (selectedType === "record" && storedData?.record?.id) {
-			storedData.record =
-				getRecordModelDetails(storedData.record) || storedData.record;
+		if (selectedType === "record" && data?.record?.id) {
+			data.record = getRecordModelDetails(data.record) || data.record;
 		}
 
 		const styleAllowsIcons =
-			!hasStyling || storedData.stylingType?.allowIcons === true;
+			!hasStyling || data.stylingType?.allowIcons === true;
 		if (!styleAllowsIcons || !hasIcons) {
-			storedData.iconType = undefined as any;
+			data.iconType = undefined as any;
 		}
 
-		const currentShowIcon =
-			hasIcons && styleAllowsIcons;
+		if (!data.open_in_new_window) {
+			data.nofollow = false;
+		}
+
+		const currentShowIcon = hasIcons && styleAllowsIcons;
 
 		const formatted = {
 			isValid: false,
 			type: selectedType,
 			modelApiKey:
 				selectedType === "record"
-					? storedData?.record?.modelApiKey
+					? data?.record?.modelApiKey
 					: undefined,
-			text: getText(storedData, selectedType),
-			ariaLabel:
-				storedData.aria_label ?? getText(storedData, selectedType),
+			text: getText(data, selectedType),
+			ariaLabel: data.aria_label ?? getText(data, selectedType),
 			url:
 				selectedType !== ""
-					? storedData?.[selectedType]?.url || null
+					? data?.[selectedType]?.url || null
 					: null,
-			target: storedData?.open_in_new_window ? "_blank" : "_self",
-			class: storedData?.stylingType?.value || null,
-			icon: currentShowIcon
-				? storedData?.iconType?.value || null
-				: null,
+			target: data?.open_in_new_window ? "_blank" : "_self",
+			rel: data?.open_in_new_window && data?.nofollow ? "nofollow" : null,
+			noFollow: data?.open_in_new_window ? (data?.nofollow || false) : false,
+			class: data?.stylingType?.value || null,
+			icon: currentShowIcon ? data?.iconType?.value || null : null,
 		};
 
 		formatted.isValid = formatted.text && formatted.url ? true : false;
 
 		const newSettings = {
-			...storedData,
+			...data,
 			isValid: formatted.isValid,
 			formatted: formatted,
 		};
 
+		storedDataRef.current = newSettings;
 		setContentSettings(newSettings);
 
 		ctx.setFieldValue(ctx.fieldPath, JSON.stringify(newSettings));
@@ -381,135 +380,210 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	return (
 		<Canvas ctx={ctx}>
 			{contentSettings.linkType?.value ? (
-				<Form className={styles["link-field"]}>
-					<div className={styles["link-field__type"]}>
-						<SelectField
-							name="type"
-							id="type"
-							label="Type"
-							value={contentSettings.linkType}
-							selectInputProps={{
-								options: linkTypeOptions as LinkTypeData[],
-							}}
-							onChange={(newValue) => {
-								updateContentSettings({ linkType: newValue });
-							}}
-						/>
-					</div>
-
-					<div className={styles["link-field__link"]}>
-						{contentSettings.linkType.value === "record" ? (
-							<FieldRecord
-								ctx={ctx}
-								ctxFieldParameters={ctxFieldParameters}
-								ctxPluginParameters={ctxPluginParameters}
-								savedFieldSettings={contentSettings.record}
-								onValueUpdate={(value: any) =>
-									updateContentSettings({ record: value })
-								}
-								locale={locale}
-							/>
-						) : contentSettings?.linkType?.value === "asset" ? (
-							<FieldAsset
-								ctx={ctx}
-								savedFieldSettings={contentSettings.asset}
-								onValueUpdate={(value: any) =>
-									updateContentSettings({ asset: value })
-								}
-								locale={locale}
-							/>
-						) : contentSettings?.linkType?.value === "url" ? (
-							<FieldUrl
-								ctx={ctx}
-								savedFieldSettings={contentSettings.url}
-								onValueUpdate={(value: any) =>
-									updateContentSettings({ url: value })
-								}
-							/>
-						) : contentSettings?.linkType?.value === "tel" ? (
-							<FieldTel
-								ctx={ctx}
-								savedFieldSettings={contentSettings.tel}
-								onValueUpdate={(value: any) =>
-									updateContentSettings({ tel: value })
-								}
-							/>
-						) : contentSettings?.linkType?.value === "email" ? (
-							<FieldEmail
-								ctx={ctx}
-								savedFieldSettings={contentSettings.email}
-								onValueUpdate={(value: any) =>
-									updateContentSettings({ email: value })
-								}
-							/>
-						) : null}
-					</div>
-
-					{hasStyling && (
-						<div className={styles["link-field__styling"]}>
-							<SelectField
-								name="styling"
-								id="styling"
-								label="Styling"
-								value={contentSettings.stylingType}
-								selectInputProps={{
-									options:
-										stylingOptions as StylingTypeData[],
-								}}
-								onChange={(newValue) => {
-									updateContentSettings({
-										stylingType: newValue,
-									});
-								}}
-							/>
+				<Form>
+					<div className={styles["link-field"]}>
+						<div className={styles["link-field__row-type"]}>
+							<div>
+								<SelectField
+									name="type"
+									id="type"
+									label="Type"
+									value={contentSettings.linkType}
+									selectInputProps={{
+										options:
+											linkTypeOptions as LinkTypeData[],
+									}}
+									onChange={(newValue) => {
+										updateContentSettings({
+											linkType: newValue,
+										});
+									}}
+								/>
+							</div>
+							<div>
+								{contentSettings.linkType.value ===
+								"record" ? (
+									<FieldRecord
+										ctx={ctx}
+										ctxFieldParameters={
+											ctxFieldParameters
+										}
+										ctxPluginParameters={
+											ctxPluginParameters
+										}
+										savedFieldSettings={
+											contentSettings.record
+										}
+										onValueUpdate={(value: any) =>
+											updateContentSettings({
+												record: value,
+											})
+										}
+										locale={locale}
+									/>
+								) : contentSettings?.linkType?.value ===
+								  "asset" ? (
+									<FieldAsset
+										ctx={ctx}
+										savedFieldSettings={
+											contentSettings.asset
+										}
+										onValueUpdate={(value: any) =>
+											updateContentSettings({
+												asset: value,
+											})
+										}
+										locale={locale}
+									/>
+								) : contentSettings?.linkType?.value ===
+								  "url" ? (
+									<FieldUrl
+										ctx={ctx}
+										savedFieldSettings={
+											contentSettings.url
+										}
+										onValueUpdate={(value: any) =>
+											updateContentSettings({
+												url: value,
+											})
+										}
+									/>
+								) : contentSettings?.linkType?.value ===
+								  "tel" ? (
+									<FieldTel
+										ctx={ctx}
+										savedFieldSettings={
+											contentSettings.tel
+										}
+										onValueUpdate={(value: any) =>
+											updateContentSettings({
+												tel: value,
+											})
+										}
+									/>
+								) : contentSettings?.linkType?.value ===
+								  "email" ? (
+									<FieldEmail
+										ctx={ctx}
+										savedFieldSettings={
+											contentSettings.email
+										}
+										onValueUpdate={(value: any) =>
+											updateContentSettings({
+												email: value,
+											})
+										}
+									/>
+								) : null}
+							</div>
 						</div>
-					)}
 
-					{showIconSelect && (
-						<div
-							className={
-								hasStyling
-									? styles["link-field__icon"]
-									: styles["link-field__icon--col1"]
-							}
-						>
-							<SelectField
-								name="icon"
-								id="icon"
-								label="Icon"
-								value={contentSettings.iconType}
-								selectInputProps={{
-									options: iconOptions as IconTypeData[],
-								}}
-								onChange={(newValue) => {
-									updateContentSettings({
-										iconType: newValue,
-									});
-								}}
-							/>
-						</div>
-					)}
+						{(allowCustomText || allowAriaLabel) && (
+							<div
+								className={
+									styles["link-field__row-title"]
+								}
+							>
+								{allowCustomText && (
+									<div>
+										<TextField
+											name="custom_text"
+											id="custom_text"
+											label="Title (Optional)"
+											value={
+												contentSettings.custom_text
+											}
+											textInputProps={{
+												monospaced: true,
+											}}
+											onChange={(newValue) => {
+												updateContentSettings({
+													custom_text: newValue,
+												});
+											}}
+										/>
+									</div>
+								)}
+								{allowAriaLabel && (
+									<div>
+										<TextField
+											name="aria_label"
+											id="aria_label"
+											label="Aria-label (Optional)"
+											value={
+												contentSettings.aria_label
+											}
+											textInputProps={{
+												monospaced: true,
+											}}
+											onChange={(newValue) => {
+												updateContentSettings({
+													aria_label: newValue,
+												});
+											}}
+										/>
+									</div>
+								)}
+							</div>
+						)}
 
-					{allowCustomText && (
-						<div className={getCustomTextClass()}>
-							<TextField
-								name="custom_text"
-								id="custom_text"
-								label="Custom text (Optional)"
-								value={contentSettings.custom_text}
-								textInputProps={{ monospaced: true }}
-								onChange={(newValue) => {
-									updateContentSettings({
-										custom_text: newValue,
-									});
-								}}
-							/>
-						</div>
-					)}
+						{(hasStyling || showIconSelect) && (
+							<div
+								className={
+									styles["link-field__row-variant"]
+								}
+							>
+								{hasStyling && (
+									<div>
+										<SelectField
+											name="styling"
+											id="styling"
+											label="Variant"
+											value={
+												contentSettings.stylingType
+											}
+											selectInputProps={{
+												options:
+													stylingOptions as StylingTypeData[],
+											}}
+											onChange={(newValue) => {
+												updateContentSettings({
+													stylingType: newValue,
+												});
+											}}
+										/>
+									</div>
+								)}
+								{showIconSelect && (
+									<div>
+										<SelectField
+											name="icon"
+											id="icon"
+											label="Icon"
+											value={
+												contentSettings.iconType
+											}
+											selectInputProps={{
+												options:
+													iconOptions as IconTypeData[],
+											}}
+											onChange={(newValue) => {
+												updateContentSettings({
+													iconType: newValue,
+												});
+											}}
+										/>
+									</div>
+								)}
+							</div>
+						)}
 
-					{(allowNewTarget || allowAriaLabel) && (
-						<div className={styles["link-field__bottom-row"]}>
-							{allowNewTarget && (
+						{allowNewTarget && (
+							<div
+								className={
+									styles["link-field__row-bottom"]
+								}
+							>
 								<SwitchField
 									name="open_in_new_window"
 									id="open_in_new_window"
@@ -518,30 +592,30 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 										contentSettings.open_in_new_window
 									}
 									onChange={(newValue) => {
-										contentSettings.open_in_new_window =
-											newValue;
 										updateContentSettings({
 											open_in_new_window: newValue,
 										});
 									}}
 								/>
-							)}
-							{allowAriaLabel && (
-								<TextField
-									name="aria_label"
-									id="aria_label"
-									label="Aria-label (Optional)"
-									value={contentSettings.aria_label}
-									textInputProps={{ monospaced: true }}
-									onChange={(newValue) => {
-										updateContentSettings({
-											aria_label: newValue,
-										});
-									}}
-								/>
-							)}
-						</div>
-					)}
+								{contentSettings.open_in_new_window &&
+									allowNoFollow && (
+										<SwitchField
+											name="nofollow"
+											id="nofollow"
+											label="NoFollow"
+											value={
+												contentSettings.nofollow
+											}
+											onChange={(newValue) => {
+												updateContentSettings({
+													nofollow: newValue,
+												});
+											}}
+										/>
+									)}
+							</div>
+						)}
+					</div>
 				</Form>
 			) : (
 				<div>
@@ -549,8 +623,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						<strong>Error!</strong> No valid link types could be
 						found for this field.
 						<br />
-						Please add the wanted link types to the field
-						appearance settings or the plugin settings
+						Please add the wanted link types to the field appearance
+						settings or the plugin settings
 					</p>
 				</div>
 			)}

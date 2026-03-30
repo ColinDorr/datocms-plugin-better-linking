@@ -18,7 +18,7 @@ type Props = {
 };
 
 const FieldUrl: React.FC<Props> = ({
-	ctx,
+	ctx: _ctx,
 	savedFieldSettings,
 	onValueUpdate,
 }) => {

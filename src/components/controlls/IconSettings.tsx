@@ -17,11 +17,7 @@ const IconSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 	const ctxParameters: any = getCtxParams(ctx, configType);
 
 	const iconOptions =
-		(getDefaultValue(
-			ctxParameters,
-			"iconOptions",
-			[],
-		) as IconType[]) ?? [];
+		(getDefaultValue(ctxParameters, "iconOptions", []) as IconType[]) ?? [];
 	const [keyValueList, setKeyValueList] = useState<KeyValuePairType[]>(
 		iconOptions.map((i, index) => ({
 			id: index,
@@ -41,10 +37,11 @@ const IconSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 		const settings = { ...ctxParameters, iconOptions };
 
 		if (configType === "plugin_settings") {
-			ctx.updatePluginParameters(settings);
+			await ctx.updatePluginParameters(settings);
 		} else if (configType === "field_settings") {
-			ctx.setParameters({ field_settings: settings });
+			await ctx.setParameters({ field_settings: settings });
 		}
+		ctx.notice("Icon settings saved successfully");
 	};
 
 	const updateKeyValueList = (value: KeyValuePairType[]) => {
@@ -177,7 +174,11 @@ const IconSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 					<Button
 						fullWidth
 						buttonType="muted"
-						leftIcon={<Plus size={16} />}
+						leftIcon={
+							<span style={{ display: "inline-flex", alignItems: "center" }}>
+								<Plus size={16} strokeWidth={2} style={{ fill: "none" }} />
+							</span>
+						}
 						disabled={containsDuplicates()}
 						onClick={handleAddItem}
 					>

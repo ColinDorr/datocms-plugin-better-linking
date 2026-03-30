@@ -139,7 +139,11 @@ const FieldAsset: React.FC<Props> = ({
 				<Button
 					buttonSize="xs"
 					buttonType="negative"
-					leftIcon={<Trash2 size={14} />}
+					leftIcon={
+						<span style={{ display: "inline-flex", alignItems: "center" }}>
+							<Trash2 size={14} strokeWidth={2} style={{ fill: "none" }} />
+						</span>
+					}
 					onClick={() => updateAssetValue(null)}
 				/>
 			</div>

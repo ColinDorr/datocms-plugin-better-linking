@@ -48,10 +48,11 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 		const settings = { ...ctxParameters, stylingOptions };
 
 		if (configType === "plugin_settings") {
-			ctx.updatePluginParameters(settings);
+			await ctx.updatePluginParameters(settings);
 		} else if (configType === "field_settings") {
-			ctx.setParameters({ field_settings: settings });
+			await ctx.setParameters({ field_settings: settings });
 		}
+		ctx.notice("Styling settings saved successfully");
 	};
 
 	const updateKeyValueList = (value: KeyValuePairType[]) => {
@@ -198,7 +199,11 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 					<Button
 						fullWidth
 						buttonType="muted"
-						leftIcon={<Plus size={16} />}
+						leftIcon={
+							<span style={{ display: "inline-flex", alignItems: "center" }}>
+								<Plus size={16} strokeWidth={2} style={{ fill: "none" }} />
+							</span>
+						}
 						disabled={containsDuplicates()}
 						onClick={handleAddItem}
 					>

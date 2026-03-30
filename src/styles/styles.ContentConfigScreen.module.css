@@ -1,63 +1,61 @@
 .link-field {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-m);
-  column-gap: var(--spacing-l);
   padding: var(--spacing-l);
   border-radius: 4px;
-  background: #f5f5f5;
+  background: var(--lighter-bg-color, #f5f5f5);
 }
 
-.link-field>* {
+.link-field > * {
   min-width: 0;
   margin: 0;
 }
 
-.link-field__type {
-  grid-column: 1;
+.link-field__row-type {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-l);
 }
 
-.link-field__link {
-  grid-column: 2;
+.link-field__row-type > * {
+  min-width: 0;
+  margin: 0;
 }
 
-.link-field__styling {
-  grid-column: 1;
+.link-field__row-title {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-l);
 }
 
-.link-field__icon {
-  grid-column: 2;
+.link-field__row-title > * {
+  min-width: 0;
+  margin: 0;
 }
 
-.link-field__icon--col1 {
-  grid-column: 1;
+.link-field__row-variant {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-l);
 }
 
-.link-field__custom-text {
-  grid-column: 2;
+.link-field__row-variant > * {
+  min-width: 0;
+  margin: 0;
 }
 
-.link-field__custom-text--full {
-  grid-column: 1 / -1;
-}
-
-.link-field__bottom-row {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: flex-end;
+.link-field__row-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--spacing-l);
   padding-top: var(--spacing-m);
   border-top: 1px solid var(--border-color);
 }
 
-.link-field__bottom-row>* {
-  margin: 0;
-  flex-shrink: 0;
-}
-
-.link-field__bottom-row>*:last-child:not(:first-child) {
-  flex: 1;
+.link-field__row-bottom > * {
   min-width: 0;
+  margin: 0;
 }
 
 .link-field__error {
@@ -66,23 +64,10 @@
 }
 
 @media (max-width: 500px) {
-  .link-field {
+  .link-field__row-type,
+  .link-field__row-title,
+  .link-field__row-variant,
+  .link-field__row-bottom {
     grid-template-columns: 1fr;
-  }
-
-  .link-field__type,
-  .link-field__link,
-  .link-field__styling,
-  .link-field__icon,
-  .link-field__icon--col1,
-  .link-field__custom-text,
-  .link-field__custom-text--full,
-  .link-field__bottom-row {
-    grid-column: 1;
-  }
-
-  .link-field__bottom-row {
-    flex-direction: column;
-    align-items: stretch;
   }
 }
