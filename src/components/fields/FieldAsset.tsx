@@ -112,7 +112,7 @@ const FieldAsset: React.FC<Props> = ({
 
 	return fieldSettings?.id ? (
 		<FieldGroup className={styles["field__selection-group"]}>
-			<p className={styles["field__selection-group__label"]}>Record</p>
+			<p className={styles["field__selection-group__label"]}>Asset</p>
 			<div className={styles["field__selection-group__content"]}>
 				<Button
 					buttonType="muted"
@@ -162,7 +162,7 @@ const FieldAsset: React.FC<Props> = ({
 		</FieldGroup>
 	) : (
 		<FieldGroup className={styles["field__selection-group"]}>
-			<p className={styles["field__selection-group__label"]}>Record</p>
+			<p className={styles["field__selection-group__label"]}>Asset</p>
 			<Button
 				buttonType="primary"
 				className={styles["field__selection-group__button"]}

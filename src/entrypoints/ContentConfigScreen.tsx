@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
 	Canvas,
 	Form,
-	FieldGroup,
 	SelectField,
 	SwitchField,
 	TextField,
@@ -142,8 +141,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	const defaultTel = { title: undefined, url: undefined };
 	const defaultEmail = { title: undefined, url: undefined };
 
-	// Set layout
-	const columnLayout = allowAriaLabel || allowNewTarget ? "col-3" : "col-2";
+	const hasStyling = stylingOptions && stylingOptions.length > 0;
 
 	const getRecordModel = (source: any) => {
 		const url = source?.cms_url || "";
@@ -347,13 +345,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 	return (
 		<Canvas ctx={ctx}>
 			{contentSettings.linkType?.value ? (
-				<Form
-					className={[
-						styles["link-field"],
-						styles[`link-field--${columnLayout}`],
-					].join(" ")}
-				>
-					<FieldGroup className={styles["link-filed__type-styling"]}>
+				<Form className={styles["link-field"]}>
+					<div className={styles["link-field__type"]}>
 						<SelectField
 							name="type"
 							id="type"
@@ -366,25 +359,9 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								updateContentSettings({ linkType: newValue });
 							}}
 						/>
-						{stylingOptions && stylingOptions.length > 0 && (
-							<SelectField
-								name="styling"
-								id="styling"
-								label="Styling"
-								value={contentSettings.stylingType}
-								selectInputProps={{
-									options:
-										stylingOptions as StylingTypeData[],
-								}}
-								onChange={(newValue) => {
-									updateContentSettings({
-										stylingType: newValue,
-									});
-								}}
-							/>
-						)}
-					</FieldGroup>
-					<FieldGroup className={styles["link-field__link-text"]}>
+					</div>
+
+					<div className={styles["link-field__link"]}>
 						{contentSettings.linkType.value === "record" ? (
 							<FieldRecord
 								ctx={ctx}
@@ -430,8 +407,39 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								}
 							/>
 						) : null}
+					</div>
 
-						{allowCustomText && (
+					{hasStyling && (
+						<div className={styles["link-field__styling"]}>
+							<SelectField
+								name="styling"
+								id="styling"
+								label="Styling"
+								value={contentSettings.stylingType}
+								selectInputProps={{
+									options:
+										stylingOptions as StylingTypeData[],
+								}}
+								onChange={(newValue) => {
+									updateContentSettings({
+										stylingType: newValue,
+									});
+								}}
+							/>
+						</div>
+					)}
+
+					{allowCustomText && (
+						<div
+							className={[
+								styles["link-field__custom-text"],
+								!hasStyling
+									? styles["link-field__custom-text--full"]
+									: "",
+							]
+								.filter(Boolean)
+								.join(" ")}
+						>
 							<TextField
 								name="custom_text"
 								id="custom_text"
@@ -444,42 +452,27 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 									});
 								}}
 							/>
-						)}
-					</FieldGroup>
+						</div>
+					)}
 
 					{(allowNewTarget || allowAriaLabel) && (
-						<FieldGroup
-							className={styles["link-field__target-column"]}
-						>
+						<div className={styles["link-field__bottom-row"]}>
 							{allowNewTarget && (
-								<div
-									className={
-										styles["link-field__target-container"]
+								<SwitchField
+									name="open_in_new_window"
+									id="open_in_new_window"
+									label="Open in new window"
+									value={
+										contentSettings.open_in_new_window
 									}
-								>
-									<p
-										className={
-											styles["link-field__target-label"]
-										}
-									>
-										Window (Optional)
-									</p>
-									<SwitchField
-										name="open_in_new_window"
-										id="open_in_new_window"
-										label="Open in new window"
-										value={
-											contentSettings.open_in_new_window
-										}
-										onChange={(newValue) => {
-											contentSettings.open_in_new_window =
-												newValue;
-											updateContentSettings({
-												open_in_new_window: newValue,
-											});
-										}}
-									/>
-								</div>
+									onChange={(newValue) => {
+										contentSettings.open_in_new_window =
+											newValue;
+										updateContentSettings({
+											open_in_new_window: newValue,
+										});
+									}}
+								/>
 							)}
 							{allowAriaLabel && (
 								<TextField
@@ -495,7 +488,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 									}}
 								/>
 							)}
-						</FieldGroup>
+						</div>
 					)}
 				</Form>
 			) : (
@@ -504,8 +497,8 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						<strong>Error!</strong> No valid link types could be
 						found for this field.
 						<br />
-						Please add the wanted link types to the field appearence
-						settings or the plugin settings
+						Please add the wanted link types to the field
+						appearance settings or the plugin settings
 					</p>
 				</div>
 			)}

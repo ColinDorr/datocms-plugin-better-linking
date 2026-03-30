@@ -1,73 +1,78 @@
 .link-field {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-m);
-    column-gap: var(--spacing-l);
-    padding: var(--spacing-l);
-    border-radius: 8px;
-    background: #f5f5f5;
-}
-.link-field--col-2{
-    grid-template-areas: "col1 col2 col2";
-}
-.link-field--col-3{
-    grid-template-areas: "col1 col2 col3";
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--spacing-m);
+  column-gap: var(--spacing-l);
+  padding: var(--spacing-l);
+  border-radius: 4px;
+  background: #f5f5f5;
 }
 
-.link-field > * {
-    width: 100%;
-    min-width: 0;
-    margin: 0;
-}
-.link-field > *:nth-of-type(1){
-    grid-area: col1;
-}
-.link-field > *:nth-of-type(2){
-    grid-area: col2;
-}
-.link-field > *:nth-of-type(3){
-    grid-area: col3;
+.link-field>* {
+  min-width: 0;
+  margin: 0;
 }
 
-.link-filed__type-styling,
-.link-field__link-text,
-.link-field__target-column {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-m);
+.link-field__type {
+  grid-column: 1;
 }
 
-.link-filed__type-styling > *,
-.link-field__link-text > *,
-.link-field__target-column > * {
-    margin: 0;
+.link-field__link {
+  grid-column: 2;
 }
 
-.link-field__target-column > * {
-    margin-bottom: 4px;
+.link-field__styling {
+  grid-column: 1;
+}
+
+.link-field__custom-text {
+  grid-column: 2;
+}
+
+.link-field__custom-text--full {
+  grid-column: 1 / -1;
+}
+
+.link-field__bottom-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-l);
+  padding-top: var(--spacing-m);
+  border-top: 1px solid var(--border-color);
+}
+
+.link-field__bottom-row>* {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.link-field__bottom-row>*:last-child:not(:first-child) {
+  flex: 1;
+  min-width: 0;
 }
 
 .link-field__error {
-    color: var(--remove-color);
-    font-size: var(--font-size-l);
-}
-.link-field__target-label {
-    margin: 0 0 6px;
-    color: var(--light-body-color);
-    font-size: var(--font-size-m);
-}
-.link-field__target-label + * {
-    height: 38px;
+  color: var(--remove-color);
+  font-size: var(--font-size-l);
 }
 
-@media (max-width: 800px) {
-    .link-field {
-        grid-template-columns: 1fr;
-    }
-    .link-field--col-2 {
-        grid-template-areas: "col1" "col2";
-    }
-    .link-field--col-3 {
-        grid-template-areas: "col1" "col2" "col3";
-    }
+@media (max-width: 500px) {
+  .link-field {
+    grid-template-columns: 1fr;
+  }
+
+  .link-field__type,
+  .link-field__link,
+  .link-field__styling,
+  .link-field__custom-text,
+  .link-field__custom-text--full,
+  .link-field__bottom-row {
+    grid-column: 1;
+  }
+
+  .link-field__bottom-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
