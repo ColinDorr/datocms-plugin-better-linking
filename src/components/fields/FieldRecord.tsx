@@ -170,8 +170,17 @@ const FieldRecord: React.FC<Props> = ({
 					buttonSize="xs"
 					buttonType="negative"
 					leftIcon={
-						<span style={{ display: "inline-flex", alignItems: "center" }}>
-							<Trash2 size={14} strokeWidth={2} style={{ fill: "none" }} />
+						<span
+							style={{
+								display: "inline-flex",
+								alignItems: "center",
+							}}
+						>
+							<Trash2
+								size={14}
+								strokeWidth={2}
+								style={{ fill: "none" }}
+							/>
 						</span>
 					}
 					onClick={() => updateRecordValue(null)}

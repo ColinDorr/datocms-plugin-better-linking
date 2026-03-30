@@ -200,8 +200,17 @@ const StylingSettings: React.FC<PropTypes> = ({ ctx, configType }) => {
 						fullWidth
 						buttonType="muted"
 						leftIcon={
-							<span style={{ display: "inline-flex", alignItems: "center" }}>
-								<Plus size={16} strokeWidth={2} style={{ fill: "none" }} />
+							<span
+								style={{
+									display: "inline-flex",
+									alignItems: "center",
+								}}
+							>
+								<Plus
+									size={16}
+									strokeWidth={2}
+									style={{ fill: "none" }}
+								/>
 							</span>
 						}
 						disabled={containsDuplicates()}

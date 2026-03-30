@@ -59,7 +59,9 @@ describe("getCtxParams", () => {
 			parameters: { field_settings: {} },
 			field: {
 				attributes: {
-					appearance: { parameters: { field_settings: fieldSettings } },
+					appearance: {
+						parameters: { field_settings: fieldSettings },
+					},
 				},
 			},
 			plugin: { attributes: { parameters: {} } },

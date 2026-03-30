@@ -352,13 +352,12 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 					: undefined,
 			text: getText(data, selectedType),
 			ariaLabel: data.aria_label ?? getText(data, selectedType),
-			url:
-				selectedType !== ""
-					? data?.[selectedType]?.url || null
-					: null,
+			url: selectedType !== "" ? data?.[selectedType]?.url || null : null,
 			target: data?.open_in_new_window ? "_blank" : "_self",
 			rel: data?.open_in_new_window && data?.nofollow ? "nofollow" : null,
-			noFollow: data?.open_in_new_window ? (data?.nofollow || false) : false,
+			noFollow: data?.open_in_new_window
+				? data?.nofollow || false
+				: false,
 			class: data?.stylingType?.value || null,
 			icon: currentShowIcon ? data?.iconType?.value || null : null,
 		};
@@ -401,13 +400,10 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								/>
 							</div>
 							<div>
-								{contentSettings.linkType.value ===
-								"record" ? (
+								{contentSettings.linkType.value === "record" ? (
 									<FieldRecord
 										ctx={ctx}
-										ctxFieldParameters={
-											ctxFieldParameters
-										}
+										ctxFieldParameters={ctxFieldParameters}
 										ctxPluginParameters={
 											ctxPluginParameters
 										}
@@ -439,9 +435,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								  "url" ? (
 									<FieldUrl
 										ctx={ctx}
-										savedFieldSettings={
-											contentSettings.url
-										}
+										savedFieldSettings={contentSettings.url}
 										onValueUpdate={(value: any) =>
 											updateContentSettings({
 												url: value,
@@ -452,9 +446,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 								  "tel" ? (
 									<FieldTel
 										ctx={ctx}
-										savedFieldSettings={
-											contentSettings.tel
-										}
+										savedFieldSettings={contentSettings.tel}
 										onValueUpdate={(value: any) =>
 											updateContentSettings({
 												tel: value,
@@ -479,20 +471,14 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						</div>
 
 						{(allowCustomText || allowAriaLabel) && (
-							<div
-								className={
-									styles["link-field__row-title"]
-								}
-							>
+							<div className={styles["link-field__row-title"]}>
 								{allowCustomText && (
 									<div>
 										<TextField
 											name="custom_text"
 											id="custom_text"
 											label="Title (Optional)"
-											value={
-												contentSettings.custom_text
-											}
+											value={contentSettings.custom_text}
 											textInputProps={{
 												monospaced: true,
 											}}
@@ -510,9 +496,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 											name="aria_label"
 											id="aria_label"
 											label="Aria-label (Optional)"
-											value={
-												contentSettings.aria_label
-											}
+											value={contentSettings.aria_label}
 											textInputProps={{
 												monospaced: true,
 											}}
@@ -528,20 +512,14 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						)}
 
 						{(hasStyling || showIconSelect) && (
-							<div
-								className={
-									styles["link-field__row-variant"]
-								}
-							>
+							<div className={styles["link-field__row-variant"]}>
 								{hasStyling && (
 									<div>
 										<SelectField
 											name="styling"
 											id="styling"
 											label="Variant"
-											value={
-												contentSettings.stylingType
-											}
+											value={contentSettings.stylingType}
 											selectInputProps={{
 												options:
 													stylingOptions as StylingTypeData[],
@@ -560,9 +538,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 											name="icon"
 											id="icon"
 											label="Icon"
-											value={
-												contentSettings.iconType
-											}
+											value={contentSettings.iconType}
 											selectInputProps={{
 												options:
 													iconOptions as IconTypeData[],
@@ -579,18 +555,12 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 						)}
 
 						{allowNewTarget && (
-							<div
-								className={
-									styles["link-field__row-bottom"]
-								}
-							>
+							<div className={styles["link-field__row-bottom"]}>
 								<SwitchField
 									name="open_in_new_window"
 									id="open_in_new_window"
 									label="Open in new window"
-									value={
-										contentSettings.open_in_new_window
-									}
+									value={contentSettings.open_in_new_window}
 									onChange={(newValue) => {
 										updateContentSettings({
 											open_in_new_window: newValue,
@@ -603,9 +573,7 @@ export default function ContentConigScreen({ ctx }: PropTypes) {
 											name="nofollow"
 											id="nofollow"
 											label="NoFollow"
-											value={
-												contentSettings.nofollow
-											}
+											value={contentSettings.nofollow}
 											onChange={(newValue) => {
 												updateContentSettings({
 													nofollow: newValue,
