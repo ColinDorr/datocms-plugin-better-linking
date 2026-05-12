@@ -10,7 +10,9 @@ export type NormalizedItemType = {
 	type?: string;
 };
 
-export function normalizeItemTypeEntry(itemType: any): NormalizedItemType | null {
+export function normalizeItemTypeEntry(
+	itemType: any,
+): NormalizedItemType | null {
 	if (!itemType) {
 		return null;
 	}
