@@ -1,3 +1,61 @@
+/**
+ * Plugin settings store "allowed record models" as compact select options
+ * `{ label, api_key?, value }` (`value` is the item type id). Older saves may
+ * still contain full Dato item type objects with `id` and `attributes`.
+ */
+export type NormalizedItemType = {
+	id: string;
+	api_key?: string;
+	label?: string;
+	type?: string;
+};
+
+export function normalizeItemTypeEntry(
+	itemType: any,
+): NormalizedItemType | null {
+	if (!itemType) {
+		return null;
+	}
+
+	// Compact shape from LinkSettings (post 0.2.7): { label, api_key?, value }
+	if (itemType.value !== undefined && itemType.value !== null) {
+		return {
+			id: String(itemType.value),
+			api_key: itemType.api_key,
+			label: itemType.label,
+		};
+	}
+
+	// Full Dato item type resource (legacy saved params)
+	if (itemType.id) {
+		return {
+			id: String(itemType.id),
+			api_key: itemType.api_key ?? itemType.attributes?.api_key,
+			label: itemType.label ?? itemType.attributes?.name,
+			type: itemType.type ?? itemType.attributes?.kind,
+		};
+	}
+
+	return null;
+}
+
+export function findItemTypeById(
+	itemTypes: any[],
+	itemTypeId: string | null | undefined,
+): NormalizedItemType | null {
+	if (itemTypeId == null || itemTypeId === "") {
+		return null;
+	}
+	const id = String(itemTypeId);
+	for (const entry of itemTypes) {
+		const normalized = normalizeItemTypeEntry(entry);
+		if (normalized && normalized.id === id) {
+			return normalized;
+		}
+	}
+	return null;
+}
+
 const Helpers = () => {
 	// Return parametes object form the current context (Ctx)
 	function getCtxParams(ctx: any, configType: string) {
@@ -53,6 +111,8 @@ const Helpers = () => {
 	return {
 		getCtxParams,
 		getDefaultValue,
+		normalizeItemTypeEntry,
+		findItemTypeById,
 	};
 };
 

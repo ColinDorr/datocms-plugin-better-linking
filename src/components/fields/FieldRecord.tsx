@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FieldGroup, Button, SelectField } from "datocms-react-ui";
+import { findItemTypeById } from "./../../utils/helpers";
 import styles from "./../../styles/styles.FieldRecordAsset.module.css";
 
 type LinkType = { label: string; api_key?: string; value: string };
@@ -84,14 +85,11 @@ const FieldRecord: React.FC<Props> = ({
 		const status = record?.meta?.status || null;
 		const url = slug;
 
-		// Get model API key from the item type relationship
+		// Get model API key from the item type relationship or allowed item types
 		let modelApiKey: string | undefined = undefined;
 		if (record?.relationships?.item_type?.data?.id) {
 			const itemTypeId = record.relationships.item_type.data.id;
-
-			const matchingItemType = itemTypes.find(
-				(itemType: any) => itemType.id === itemTypeId,
-			);
+			const matchingItemType = findItemTypeById(itemTypes, itemTypeId);
 
 			// Check if we can get the API key directly from the record's item_type data
 			if (record?.relationships?.item_type?.data?.attributes?.api_key) {
