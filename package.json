@@ -3,7 +3,7 @@
 	"name": "datocms-plugin-better-linking",
 	"homepage": "https://github.com/ColinDorr/datocms-plugin-better-linking",
 	"version": "0.2.8",
-	"description": "This datoCMS plugin enables a custom UI, to have better controll over your record, assets, urls, telephone or email links",
+	"description": "Adds a better custom UI for storing links using JSON fields, giving you better control over your record, assets, URLs, tel: or email: links (both URLs and references to other objects in DatoCMS)",
 	"engines": {
 		"node": ">=20.0.0"
 	},

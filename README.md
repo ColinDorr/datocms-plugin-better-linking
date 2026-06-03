@@ -9,6 +9,7 @@ This DatoCMS plugin allows you to easily create a complex link field, containing
 - Aria-label text overrides
 - Target window controls
 
+This plugin was created by Frontend Developer [Colin Dörr](https://github.com/ColinDorr). DatoCMS helps maintain it in a semi-official capcity.
 
 ![](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/cover.png)
 
@@ -36,3 +37,9 @@ When querying the data of a `Better Linking` field, the whole JSON data object w
 This might look a bit intimidating at first glance, but don't be scared. In the JSON data object, you will also find an object called `formatted`. This object contains a minimized representation of all link data. In most cases, this data will be more than enough to handle your links.
 
 ![formatted response](https://raw.githubusercontent.com/ColinDorr/datocms-plugin-better-linking/main/docs/graphql-response.png)
+
+## Changelog
+
+-0.2.9: Fixed improper URL validation that wasn't allowing % signs (https://github.com/ColinDorr/datocms-plugin-better-linking/issues/18)
+-0.2.8: Fixed a parameter conflict between `id` and `value` (https://github.com/ColinDorr/datocms-plugin-better-linking/pull/20)
+-0.2.7 and prior: No changelog kept (sorry)
