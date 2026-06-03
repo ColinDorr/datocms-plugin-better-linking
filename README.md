@@ -40,6 +40,6 @@ This might look a bit intimidating at first glance, but don't be scared. In the 
 
 ## Changelog
 
--0.2.9: Fixed improper URL validation that wasn't allowing % signs (https://github.com/ColinDorr/datocms-plugin-better-linking/issues/18)
+-0.3.0: Fixed improper URL validation that wasn't allowing % signs (https://github.com/ColinDorr/datocms-plugin-better-linking/issues/18)
 -0.2.8: Fixed a parameter conflict between `id` and `value` (https://github.com/ColinDorr/datocms-plugin-better-linking/pull/20)
 -0.2.7 and prior: No changelog kept (sorry)
